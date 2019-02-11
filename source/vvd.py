@@ -1,8 +1,8 @@
 import sys
 import os
-from .byte_io import ByteIO
+from io_mesh_SourceMDL.byte_io import ByteIO
 from .vvd_data import SourceVvdFileData
-from .utils import case_insensitive_file_resolution
+from io_mesh_SourceMDL.utils import case_insensitive_file_resolution
 
 
 class SourceVvdFile49:

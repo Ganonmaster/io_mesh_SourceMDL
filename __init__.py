@@ -55,7 +55,7 @@ class MDLImporter_OT_operator(bpy.types.Operator):
                                     join_clamped=self.join_clamped,
                                     import_textures=self.import_textures)
             if self.write_qc:
-                from . import qc
+                from io_mesh_SourceMDL.source import qc
                 qc = qc.QC(importer.MDL)
                 qc_file = bpy.data.texts.new('{}.qc'.format(Path(file.name).stem))
                 qc.write_header(qc_file)

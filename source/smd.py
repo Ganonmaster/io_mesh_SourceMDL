@@ -1,11 +1,11 @@
-from . import vtx_data
-from . import progress_bar
-from .mdl import *
-from .vtx import *
-from .vvd import *
-from .vtx_data import *
-from .mdl_data import *
-from .vvd_data import *
+from io_mesh_SourceMDL.source import vtx_data
+from io_mesh_SourceMDL import progress_bar
+from io_mesh_SourceMDL.source.mdl import *
+from io_mesh_SourceMDL.source.vtx import *
+from io_mesh_SourceMDL.source.vvd import *
+from io_mesh_SourceMDL.source.vtx_data import *
+from io_mesh_SourceMDL.source.mdl_data import *
+from io_mesh_SourceMDL.source.vvd_data import *
 import os.path
 
 

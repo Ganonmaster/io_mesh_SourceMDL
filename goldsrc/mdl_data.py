@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from pprint import pformat
 
 from ..byte_io import ByteIO
-from ..valve_structs import SourceVector
+from ..source_structs import SourceVector
 # from .mdl_data import StudioHDRFlags
 from ..utils import get_class_var_name
 

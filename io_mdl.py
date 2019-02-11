@@ -8,8 +8,8 @@ from contextlib import redirect_stdout
 from typing import List
 from .ValveFileSystem import blender
 
-from . import vvd, vvd_data, vtx, mdl, mdl_data, vtx_data, valve_structs, progress_bar, utils
-from . import math_utilities
+from . import source_structs, progress_bar
+from io_mesh_SourceMDL.source import mdl_data, mdl, vtx_data, vtx, vvd
 
 from io_texture_VTF import ValveUtils as ValveUtilsVTF
 
@@ -248,11 +248,11 @@ class IOMdl:
         return indexes, material_indexes, vertex_normals
 
     @staticmethod
-    def convert_vertex(vertex: valve_structs.SourceVertex):
+    def convert_vertex(vertex: source_structs.SourceVertex):
         return vertex.position.as_list, (vertex.texCoordX, 1 - vertex.texCoordY)
 
     @staticmethod
-    def convert_vertex2(vertex: valve_structs.SourceVertex):
+    def convert_vertex2(vertex: source_structs.SourceVertex):
         return vertex.position.as_list, (
             vertex.texCoordX, 1 - vertex.texCoordY), vertex.normal.as_list, vertex.boneWeight
 
@@ -281,7 +281,7 @@ class IOMdl:
         vtx_vertexes = []
         vertexes = []
         normals = []
-        weights = []  # type: List[valve_structs.SourceBoneWeight]
+        weights = []  # type: List[source_structs.SourceBoneWeight]
         uvs = []
         for vtx_mesh, mdl_mesh in zip(vtx_model_lod.vtx_meshes, model.meshes):
             # mdl_mesh.vertex_index_start

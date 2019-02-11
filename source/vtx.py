@@ -1,6 +1,6 @@
 import os
 from .vtx_data import *
-from .utils import case_insensitive_file_resolution
+from io_mesh_SourceMDL.utils import case_insensitive_file_resolution
 
 
 def split(array, n=3):

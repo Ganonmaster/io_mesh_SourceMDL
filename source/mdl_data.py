@@ -5,12 +5,12 @@ from pprint import pformat
 
 from typing import List, Tuple
 
-from .byte_io import ByteIO, OffsetOutOfBounds
-from .valve_structs import SourceVector, SourceQuaternion, SourceFloat16bits
-from . import vtx, vvd
-from . import math_utilities
-from .flags import Flags
-from .utils import get_class_var_name
+import io_mesh_SourceMDL.utils
+from io_mesh_SourceMDL.byte_io import ByteIO, OffsetOutOfBounds
+from io_mesh_SourceMDL.source_structs import SourceVector, SourceQuaternion, SourceFloat16bits
+from io_mesh_SourceMDL.source import vtx, vvd
+from io_mesh_SourceMDL.flags import Flags
+from io_mesh_SourceMDL.utils import get_class_var_name
 
 
 class SourceBase:
@@ -1183,13 +1183,13 @@ class SourceMdlAttachment(SourceBase):
             self.localM33 = reader.read_float()
             self.localM34 = reader.read_float()
             self.unused = [reader.read_uint32() for _ in range(8)]
-            self.rot.x, self.rot.y, self.rot.z = math_utilities.convert_rotation_matrix_to_degrees(self.localM11,
-                                                                                                   self.localM21,
-                                                                                                   self.localM31,
-                                                                                                   self.localM12,
-                                                                                                   self.localM22,
-                                                                                                   self.localM32,
-                                                                                                   self.localM33)
+            self.rot.x, self.rot.y, self.rot.z = io_mesh_SourceMDL.utils.convert_rotation_matrix_to_degrees(self.localM11,
+                                                                                                            self.localM21,
+                                                                                                            self.localM31,
+                                                                                                            self.localM12,
+                                                                                                            self.localM22,
+                                                                                                            self.localM32,
+                                                                                                            self.localM33)
             self.pos.y = round(self.localM24, 3)
             self.pos.z = round(self.localM34, 3)
             self.pos.x = round(self.localM14, 3)

@@ -1,15 +1,15 @@
 import math
 import os.path
 from pathlib import Path
-from .valve_structs import SourceVector
-from .mdl import SourceMdlFile49, SourceMdlModel
-from .mdl_data import SourceMdlBodyPart, SourceMdlAttachment
-from .mdl_data_animations import SourceMdlSequenceDesc
+from io_mesh_SourceMDL.source_structs import SourceVector
+from io_mesh_SourceMDL.source.mdl import SourceMdlFile49, SourceMdlModel
+from io_mesh_SourceMDL.source.mdl_data import SourceMdlBodyPart, SourceMdlAttachment
+from io_mesh_SourceMDL.source.mdl_data_animations import SourceMdlSequenceDesc
 from .smd import SMD
 from .vta import VTA
-from .vtx import SourceVtxFile49
-from .vvd import SourceVvdFile49
-from .math_utilities import convert_rotation_matrix_to_degrees
+from io_mesh_SourceMDL.source.vtx import SourceVtxFile49
+from io_mesh_SourceMDL.source.vvd import SourceVvdFile49
+from io_mesh_SourceMDL.utils import convert_rotation_matrix_to_degrees
 
 
 class QC:

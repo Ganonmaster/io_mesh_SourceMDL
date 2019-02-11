@@ -1,6 +1,6 @@
 from typing import List
-from .byte_io import ByteIO
-from .valve_structs import SourceVertex
+from io_mesh_SourceMDL.byte_io import ByteIO
+from io_mesh_SourceMDL.source_structs import SourceVertex
 
 
 class SourceVvdFileData:

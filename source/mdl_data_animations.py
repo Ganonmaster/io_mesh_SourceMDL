@@ -6,8 +6,8 @@ import struct
 
 import math
 
-from .byte_io import ByteIO
-from .valve_structs import SourceFloat16bits, SourceVector
+from io_mesh_SourceMDL.byte_io import ByteIO
+from io_mesh_SourceMDL.source_structs import SourceFloat16bits, SourceVector
 from .mdl_data import *
 
 class SourceMdlAnimationValuePointer:

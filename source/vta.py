@@ -1,11 +1,10 @@
 import os.path
 from typing import List
 
-from .mdl import SourceMdlFile49, SourceVector
-from .mdl_data import SourceMdlBone, SourceMdlFlexDesc, SourceMdlFlex, SourceMdlVertAnim, SourceMdlMesh, \
-    SourceMdlBodyPart, SourceMdlModel, FlexFrame
-from .vvd import SourceVvdFile49
-from .vvd_data import SourceVertex
+from io_mesh_SourceMDL.source.mdl import SourceMdlFile49, SourceVector
+from io_mesh_SourceMDL.source.mdl_data import SourceMdlBone, SourceMdlVertAnim, SourceMdlModel, FlexFrame
+from io_mesh_SourceMDL.source.vvd import SourceVvdFile49
+from io_mesh_SourceMDL.source.vvd_data import SourceVertex
 
 
 class VTA:
