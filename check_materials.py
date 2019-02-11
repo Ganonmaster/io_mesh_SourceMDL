@@ -1,3 +1,6 @@
+from ValveFileSystem.valve import GameInfoFile, KeyValueFile
+from ValveFileSystem import blender
+from io_mesh_SourceMDL.source import mdl
 import os
 import sys
 from ctypes import windll
@@ -7,9 +10,6 @@ k32 = windll.LoadLibrary('kernel32.dll')
 setConsoleModeProc = k32.SetConsoleMode
 setConsoleModeProc(k32.GetStdHandle(-11), 0x0001 | 0x0002 | 0x0004)
 
-from io_mesh_SourceMDL.source import mdl
-from ValveFileSystem import blender
-from ValveFileSystem.valve import GameInfoFile, KeyValueFile
 
 if __name__ == '__main__':
     # model = Path(
@@ -38,11 +38,14 @@ if __name__ == '__main__':
         (model, Path(model).relative_to(temp)),
         (model.with_suffix('.vvd'), Path(model.with_suffix('.vvd')).relative_to(temp))]
     if model.with_suffix('.dx90.vtx').exists():
-        other_files.append((model.with_suffix('.dx90.vtx'),Path(model.with_suffix('.dx90.vtx')).relative_to(temp)))
+        other_files.append((model.with_suffix('.dx90.vtx'), Path(
+            model.with_suffix('.dx90.vtx')).relative_to(temp)))
     if model.with_suffix('.dx80.vtx').exists():
-        other_files.append((model.with_suffix('.dx80.vtx'), Path(model.with_suffix('.dx80.vtx')).relative_to(temp)))
+        other_files.append((model.with_suffix('.dx80.vtx'), Path(
+            model.with_suffix('.dx80.vtx')).relative_to(temp)))
     if model.with_suffix('.sw.vtx').exists():
-        other_files.append((model.with_suffix('.sw.vtx'), Path(model.with_suffix('.sw.vtx')).relative_to(temp)))
+        other_files.append((model.with_suffix('.sw.vtx'), Path(
+            model.with_suffix('.sw.vtx')).relative_to(temp)))
 
     print('Trying to find used textures and materials')
     print('Searching in:')
@@ -50,16 +53,23 @@ if __name__ == '__main__':
         print('\t\x1b[95m{}\x1b[0m'.format(path))
     if model.exists():
         # other_files.append(model)
-        mdl = mdl.SourceMdlFile49(filepath=str(model.with_name(model.stem)), read=False)
+        mdl = mdl.SourceMdlFile49(
+            filepath=str(
+                model.with_name(
+                    model.stem)),
+            read=False)
         mdl.read_skin_families()
         mdl.read_texture_paths()
         mdl.read_textures()
         # print(mdl.file_data.textures)
         for texture in mdl.file_data.textures:
             for tex_path in mdl.file_data.texture_paths:
-                if tex_path and (tex_path[0]=='/' or tex_path[0]=='\\'):
+                if tex_path and (tex_path[0] == '/' or tex_path[0] == '\\'):
                     tex_path = tex_path[1:]
-                mat = gi.find_material(Path(tex_path) / texture.path_file_name, use_recursive=True)
+                mat = gi.find_material(
+                    Path(tex_path) /
+                    texture.path_file_name,
+                    use_recursive=True)
                 if mat:
                     temp = blender.get_mod_path(mat)
                     materials.append((Path(mat), Path(mat).relative_to(temp)))
@@ -73,7 +83,8 @@ if __name__ == '__main__':
                     tex = gi.find_texture(v, True)
                     if tex:
                         temp = blender.get_mod_path(tex)
-                        textures.append((Path(tex), Path(tex).relative_to(temp)))
+                        textures.append(
+                            (Path(tex), Path(tex).relative_to(temp)))
             # print(kv.as_dict)
         print('\033[94m', '*' * 10, 'MATERIALS', '*' * 10, '\033[0m')
         for texture in mdl.file_data.textures:
@@ -88,7 +99,11 @@ if __name__ == '__main__':
                 print('>>>\033[94m', texture.path_file_name, '-> \033[92mFound here \033[0m>', '\033[95m', found_path,
                       '\033[0m')
             else:
-                print('>>>\033[94m', texture.path_file_name, '-> \033[91mNot found!', '\033[0m')
+                print(
+                    '>>>\033[94m',
+                    texture.path_file_name,
+                    '-> \033[91mNot found!',
+                    '\033[0m')
             # print()
 
         print('\033[94m', '*' * 10, 'TEXTURES', '*' * 10, '\033[0m')
@@ -104,7 +119,11 @@ if __name__ == '__main__':
                 print('>>>\033[94m', used_texture, '-> \033[92mFound here \033[0m>', '\033[95m', found_path,
                       '\033[0m')
             else:
-                print('>>>\033[94m', used_texture, '-> \033[91mNot found!', '\033[0m')
+                print(
+                    '>>>\033[94m',
+                    used_texture,
+                    '-> \033[91mNot found!',
+                    '\033[0m')
             # print()
     textures = list(set(textures))
     materials = list(set(materials))
@@ -114,11 +133,16 @@ if __name__ == '__main__':
         if dump_path.exists():
             for file in textures + materials + other_files:
                 try:
-                    os.makedirs((dump_path/file[1]).parent,exist_ok=True)
-                except:
+                    os.makedirs((dump_path / file[1]).parent, exist_ok=True)
+                except BaseException:
                     pass
-                copy2(file[0],dump_path/file[1])
-                print('from\033[94m',file[0],'\033[0mto\033[95m',dump_path/file[1],'\033[0m')
+                copy2(file[0], dump_path / file[1])
+                print(
+                    'from\033[94m',
+                    file[0],
+                    '\033[0mto\033[95m',
+                    dump_path / file[1],
+                    '\033[0m')
     else:
         input('Press Enter to exit')
     # print('*'*10,'MATERIALS','*'*10)

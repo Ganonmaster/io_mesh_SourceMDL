@@ -1,13 +1,14 @@
 import os.path
-from ValveFileSystem.byte_io import *
+from ValveFileSystem.byte_io import ByteIO
 from .mdl_data_animations import *
 from io_mesh_SourceMDL.progress_bar import ProgressBar
 
 
 class SourceMdlFile49:
 
-    def __init__(self, filepath,read = True):
-        self.reader = ByteIO(path=filepath + '.mdl', copy_data_from_handle=False, )
+    def __init__(self, filepath, read=True):
+        self.reader = ByteIO(path=filepath +
+                             '.mdl', copy_data_from_handle=False, )
         self.filename = os.path.basename(filepath + '.mdl')[:-4]
         self.file_data = SourceMdlFileData()
         self.file_data.read(self.reader)
@@ -34,7 +35,10 @@ class SourceMdlFile49:
 
     def read_bones(self):
         if self.file_data.bone_count > 0:
-            pb = ProgressBar(desc='Reading bones', max_=self.file_data.bone_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading bones',
+                max_=self.file_data.bone_count,
+                len_=20)
             self.reader.seek(self.file_data.bone_offset, 0)
             for i in range(self.file_data.bone_count):
                 pb.draw()
@@ -44,7 +48,10 @@ class SourceMdlFile49:
 
     def read_bone_controllers(self):
         if self.file_data.bone_controller_count > 0:
-            pb = ProgressBar(desc='Reading Bone Controllers', max_=self.file_data.bone_controller_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading Bone Controllers',
+                max_=self.file_data.bone_controller_count,
+                len_=20)
             for _ in range(self.file_data.bone_controller_count):
                 pb.draw()
                 SourceMdlBoneController().read(self.reader, self.file_data)
@@ -62,7 +69,10 @@ class SourceMdlFile49:
     def read_flex_descs(self):
         if self.file_data.flex_desc_count > 0:
             self.reader.seek(self.file_data.flex_desc_offset, 0)
-            pb = ProgressBar(desc='Reading flex descriptions', max_=self.file_data.flex_desc_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading flex descriptions',
+                max_=self.file_data.flex_desc_count,
+                len_=20)
             for _ in range(self.file_data.flex_desc_count):
                 pb.draw()
                 flex_desc = SourceMdlFlexDesc()
@@ -73,7 +83,10 @@ class SourceMdlFile49:
     def read_flex_controllers(self):
         if self.file_data.flex_controller_count > 0:
             self.reader.seek(self.file_data.flex_controller_offset, 0)
-            pb = ProgressBar(desc='Reading flex Controllers', max_=self.file_data.flex_controller_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading flex Controllers',
+                max_=self.file_data.flex_controller_count,
+                len_=20)
             for i in range(self.file_data.flex_controller_count):
                 pb.draw()
                 SourceMdlFlexController().read(self.reader, self.file_data)
@@ -81,7 +94,10 @@ class SourceMdlFile49:
 
     def read_flex_rules(self):
         self.reader.seek(self.file_data.flex_rule_offset, 0)
-        pb = ProgressBar(desc='Reading flex rules', max_=self.file_data.flex_rule_count, len_=20)
+        pb = ProgressBar(
+            desc='Reading flex rules',
+            max_=self.file_data.flex_rule_count,
+            len_=20)
         for i in range(self.file_data.flex_rule_count):
             pb.draw()
             SourceMdlFlexRule().read(self.reader, self.file_data)
@@ -90,7 +106,10 @@ class SourceMdlFile49:
     def read_attachments(self):
         if self.file_data.local_attachment_count > 0:
             self.reader.seek(self.file_data.local_attachment_offset, 0)
-            pb = ProgressBar(desc='Reading attachments', max_=self.file_data.local_attachment_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading attachments',
+                max_=self.file_data.local_attachment_count,
+                len_=20)
             for _ in range(self.file_data.local_attachment_count):
                 pb.draw()
                 SourceMdlAttachment().read(self.reader, self.file_data)
@@ -107,7 +126,10 @@ class SourceMdlFile49:
     def read_body_parts(self):
         if self.file_data.body_part_count > 0:
             self.reader.seek(self.file_data.body_part_offset)
-            pb = ProgressBar(desc='Reading body parts', max_=self.file_data.body_part_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading body parts',
+                max_=self.file_data.body_part_count,
+                len_=20)
             for _ in range(self.file_data.body_part_count):
                 pb.draw()
                 SourceMdlBodyPart().read(self.reader, self.file_data)
@@ -137,15 +159,22 @@ class SourceMdlFile49:
         self.reader.seek(self.file_data.local_animation_offset)
         with self.reader.save_current_pos():
             for _ in range(self.file_data.local_animation_count):
-                self.file_data.animation_descs.append(SourceMdlAnimationDesc49().read(self.reader, self.file_data))
+                self.file_data.animation_descs.append(
+                    SourceMdlAnimationDesc49().read(
+                        self.reader, self.file_data))
         self.read_animations()
 
     def read_sequences(self):
         with self.reader.save_current_pos():
             self.reader.seek(self.file_data.local_sequence_offset)
-            pb = ProgressBar(desc='Reading sequences', max_=self.file_data.local_sequence_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading sequences',
+                max_=self.file_data.local_sequence_count,
+                len_=20)
             for _ in range(self.file_data.local_sequence_count):
-                self.file_data.sequence_descs.append(SourceMdlSequenceDesc().read(self.reader, self.file_data))
+                self.file_data.sequence_descs.append(
+                    SourceMdlSequenceDesc().read(
+                        self.reader, self.file_data))
                 pb.increment(1)
 
     def read_mouths(self):
@@ -174,8 +203,13 @@ class SourceMdlFile49:
 
     def read_animations(self):
         for i in range(self.file_data.local_animation_count):
-            anim_desc = self.file_data.animation_descs[i]  # type: SourceMdlAnimationDesc49
-            print('Reading anim', anim_desc.theName, 'flags', anim_desc.flags.get_flags)
+            # type: SourceMdlAnimationDesc49
+            anim_desc = self.file_data.animation_descs[i]
+            print(
+                'Reading anim',
+                anim_desc.theName,
+                'flags',
+                anim_desc.flags.get_flags)
             print(anim_desc)
             anim_desc.theSectionsOfAnimations = [[]]
             entry = anim_desc.entry + i * anim_desc.size
@@ -187,20 +221,23 @@ class SourceMdlFile49:
                         self.file_data.section_frame_count = anim_desc.sectionFrameCount
                         if self.file_data.section_frame_min_frame_count >= anim_desc.frameCount:
                             self.file_data.section_frame_min_frame_count = anim_desc.frameCount - 1
-                        section_count = math.trunc(anim_desc.frameCount / anim_desc.sectionFrameCount) + 2
+                        section_count = math.trunc(
+                            anim_desc.frameCount / anim_desc.sectionFrameCount) + 2
                         for sectionIndex in range(section_count):
                             anim_desc.theSectionsOfAnimations.append([])
                         with self.reader.save_current_pos():
                             self.reader.seek(entry + anim_desc.sectionOffset)
                             for _ in range(section_count):
                                 pass
-                                anim_desc.theSections.append(SourceMdlAnimationSection().read(self.reader))
+                                anim_desc.theSections.append(
+                                    SourceMdlAnimationSection().read(self.reader))
                 else:
                     if anim_desc.sectionOffset != 0 and anim_desc.sectionFrameCount > 0:
                         self.file_data.section_frame_count = anim_desc.sectionFrameCount
                         if self.file_data.section_frame_min_frame_count >= anim_desc.frameCount:
                             self.file_data.section_frame_min_frame_count = anim_desc.frameCount - 1
-                        section_count = math.trunc(anim_desc.frameCount / anim_desc.sectionFrameCount) + 2
+                        section_count = math.trunc(
+                            anim_desc.frameCount / anim_desc.sectionFrameCount) + 2
                         # print(section_count)
                         for sectionIndex in range(section_count):
                             anim_desc.theSectionsOfAnimations.append([])
@@ -208,13 +245,15 @@ class SourceMdlFile49:
                             self.reader.seek(entry + anim_desc.sectionOffset)
                             for _ in range(section_count):
                                 pass
-                                anim_desc.theSections.append(SourceMdlAnimationSection().read(self.reader))
+                                anim_desc.theSections.append(
+                                    SourceMdlAnimationSection().read(self.reader))
                     if anim_desc.animBlock == 0:
                         with self.reader.save_current_pos():
                             self.reader.seek(entry + anim_desc.animOffset)
                             for _ in range(self.file_data.bone_count):
                                 entry_anim = self.reader.tell()
-                                print('Trying to read animation from offset', entry_anim)
+                                print(
+                                    'Trying to read animation from offset', entry_anim)
                                 pass
                                 anim, stat = SourceMdlAnimation().read(anim_desc.frameCount,
                                                                        anim_desc.theSectionsOfAnimations[0],
@@ -224,7 +263,8 @@ class SourceMdlFile49:
                                     print('Success, breaking the loop')
                                     break
                                 if stat == 1:
-                                    anim_desc.theSectionsOfAnimations.append(anim)
+                                    anim_desc.theSectionsOfAnimations.append(
+                                        anim)
                                 if stat == 0:
                                     print('ERROR, breaking the loop')
                                     break
@@ -250,7 +290,9 @@ class SourceMdlFile49:
             # No need to create defaultflex here.
 
             for model in body_part.models:
-                print('\tProcessing model {} with {} flexes'.format(model.name, model.flex_count))
+                print(
+                    '\tProcessing model {} with {} flexes'.format(
+                        model.name, model.flex_count))
 
                 for mesh in model.meshes:
                     vertex_offset = mesh.vertex_index_start
@@ -277,12 +319,14 @@ class SourceMdlFile49:
                                 flex_frame.has_partner = True
                                 flex_frame.partner = flex_desc_partner_index
 
-                            flex_dest_flex_frame[flex.flex_desc_index].append(flex_frame)
+                            flex_dest_flex_frame[flex.flex_desc_index].append(
+                                flex_frame)
 
                         # aFlexFrame.bodyAndMeshVertexIndexStarts.Add(meshVertexIndexStart +
                         # + cumulativebodyPartVertexIndexStart)
                         # aFlexFrame.flexes.Add(aFlex)
-                        flex_frame.vertex_offsets.append(vertex_offset + cumulative_vertex_offset)
+                        flex_frame.vertex_offsets.append(
+                            vertex_offset + cumulative_vertex_offset)
                         flex_frame.flexes.append(flex)
                         # Adding flex frames to bodymodel instead of bodypart
                         model.flex_frames.append(flex_frame)
@@ -313,7 +357,8 @@ class SourceMdlFile49:
             for body_part_frames in self.file_data.bodypart_frames:
                 for _, _model in body_part_frames:
                     # print('Comparing', model.name, 'to', _model)
-                    if self.comp_flex_frames(model.flex_frames, _model.models[0].flex_frames):
+                    if self.comp_flex_frames(
+                            model.flex_frames, _model.models[0].flex_frames):
                         # print('Adding', model.name, 'to', body_part_frames)
                         body_part_frames.append((n, body_part))
                         added = True
@@ -347,7 +392,7 @@ class SourceMdlFile49:
         # for m in self.file_data.flex_controllers_ui:
         #     print(m)
         # pprint(self.file_data.__dict__)
-        with open(r'.\test_data\nick_hwm_bac.mdl','wb') as fp:
+        with open(r'.\test_data\nick_hwm_bac.mdl', 'wb') as fp:
             writer = ByteIO(file=fp)
             self.file_data.write(writer)
 
@@ -380,6 +425,6 @@ class SourceMdlFile53(SourceMdlFile49):
         # self.read_sequences()
 
     def test(self):
-        with open(r'.\test_data\nick_hwm','wb') as fp:
+        with open(r'.\test_data\nick_hwm', 'wb') as fp:
             writer = ByteIO(file=fp)
             self.file_data.write(writer)

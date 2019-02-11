@@ -83,13 +83,16 @@ class SourceVector:
         return self.x == other.x and self.y == other.y and self.z == other.z
 
     def __add__(self, other):
-        return SourceVector(*[self.x + other.x, self.y + other.y, self.z + other.z])
+        return SourceVector(
+            *[self.x + other.x, self.y + other.y, self.z + other.z])
 
     def __sub__(self, other):
-        return SourceVector(*[self.x - other.x, self.y - other.y, self.z - other.z])
+        return SourceVector(
+            *[self.x - other.x, self.y - other.y, self.z - other.z])
 
     def to_degrees(self):
-        return SourceVector(*[math.degrees(self.x), math.degrees(self.y), math.degrees(self.z)])
+        return SourceVector(
+            *[math.degrees(self.x), math.degrees(self.y), math.degrees(self.z)])
 
     @property
     def asList(self):
@@ -100,7 +103,8 @@ class SourceVector:
         return "{:.6f} {:.6f} {:.6f}".format(self.x, self.y, self.z)
 
     def as_rounded(self, n):
-        return "{} {} {}".format(round(self.x, n), round(self.y, n), round(self.z, n))
+        return "{} {} {}".format(
+            round(self.x, n), round(self.y, n), round(self.z, n))
 
     @property
     def as_string(self):
@@ -154,7 +158,7 @@ class SourceVector:
 
     def __repr__(self):
         return "<Vector 3D X:{} Y:{} Z:{}>".format(round(self.x, 3), round(self.y, 3), round(self.z, 3),
-                                                        round(self.w, 3))
+                                                   round(self.w, 3))
 
 
 class SourceVector2D:
@@ -180,7 +184,8 @@ class SourceVector4D:
 
     @property
     def to_floats(self):
-        return SourceVector4D(self.x / 255, self.y / 255, self.z / 255, self.w / 255)
+        return SourceVector4D(self.x / 255, self.y / 255,
+                              self.z / 255, self.w / 255)
 
     def read(self, reader: ByteIO):
         self.x = reader.read_float()
@@ -194,7 +199,8 @@ class SourceVector4D:
         return [self.x, self.y, self.z, self.w]
 
     def __repr__(self):
-        return "<Vector 4D X:{:2f} Y:{:2f} Z:{:2f} W:{:2f}>".format(self.x, self.y, self.z, self.w)
+        return "<Vector 4D X:{:2f} Y:{:2f} Z:{:2f} W:{:2f}>".format(
+            self.x, self.y, self.z, self.w)
 
 
 class SourceBoneWeight:
@@ -204,7 +210,8 @@ class SourceBoneWeight:
         self.boneCount = b"\x00"
 
     def __repr__(self):
-        return '<SourceBoneWeight bones:{} weights:{}>'.format(self.bone, self.weight)
+        return '<SourceBoneWeight bones:{} weights:{}>'.format(
+            self.bone, self.weight)
 
 
 class SourceVertex:
@@ -263,7 +270,8 @@ class CTransform(Dummy):
         self.pos.read(reader)
 
     def __repr__(self):
-        return '<CTransform pos:{} quat:{}>'.format(self.pos.as_rounded(3), self.quat)
+        return '<CTransform pos:{} quat:{}>'.format(
+            self.pos.as_rounded(3), self.quat)
 
 
 kv_type_to_c_type = {

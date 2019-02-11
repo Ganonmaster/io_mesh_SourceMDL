@@ -17,8 +17,7 @@ bl_info = {
     'warning': 'May crash blender',
     # "wiki_url": "http://www.barneyparker.com/blender-json-import-export-plugin",
     # "tracker_url": "http://www.barneyparker.com/blender-json-import-export-plugin",
-    "category": "Import-Export"
-
+    "category": "Import-Export",
 }
 
 
@@ -31,14 +30,28 @@ class MDLImporter_OT_operator(bpy.types.Operator):
     filepath = StringProperty(
         subtype='FILE_PATH',
     )
-    files = CollectionProperty(name='File paths', type=bpy.types.OperatorFileListElement)
-    normal_bones = BoolProperty(name="Make normal skeleton or original from source?", default=False, subtype='UNSIGNED')
-    join_clamped = BoolProperty(name="Join clamped meshes?", default=False, subtype='UNSIGNED')
-    write_qc = BoolProperty(name="Write QC file", default=False, subtype='UNSIGNED')
+    files = CollectionProperty(
+        name='File paths',
+        type=bpy.types.OperatorFileListElement)
+    normal_bones = BoolProperty(
+        name="Make normal skeleton or original from source?",
+        default=False,
+        subtype='UNSIGNED')
+    join_clamped = BoolProperty(
+        name="Join clamped meshes?",
+        default=False,
+        subtype='UNSIGNED')
+    write_qc = BoolProperty(
+        name="Write QC file",
+        default=False,
+        subtype='UNSIGNED')
     filter_glob = StringProperty(default="*.mdl", options={'HIDDEN'})
 
     # Check for VTF plugin - if found, give the option to import textures
-    import_textures = BoolProperty(name="Import materials and textures", default=False, subtype='UNSIGNED')
+    import_textures = BoolProperty(
+        name="Import materials and textures",
+        default=False,
+        subtype='UNSIGNED')
 
     def execute(self, context):
         try:
@@ -62,7 +75,8 @@ class MDLImporter_OT_operator(bpy.types.Operator):
             if self.write_qc:
                 from io_mesh_SourceMDL.source import qc
                 qc = qc.QC(importer.MDL)
-                qc_file = bpy.data.texts.new('{}.qc'.format(Path(file.name).stem))
+                qc_file = bpy.data.texts.new(
+                    '{}.qc'.format(Path(file.name).stem))
                 qc.write_header(qc_file)
                 qc.write_models(qc_file)
                 qc.write_skins(qc_file)
@@ -116,7 +130,10 @@ class VmdlImporter_OT_operator(bpy.types.Operator):
     # WorkDir = StringProperty(name="path to folder with gameinfo.txt", maxlen=1024, default="", subtype='FILE_PATH')
     # Import_textures = BoolProperty(name="Import textures?\nLARGE TEXTURES MAY CAUSE OUT OF MEMORY AND CRASH",
     #                                default=False, subtype='UNSIGNED')
-    import_meshes = BoolProperty(name="Import meshes", default=False, subtype='UNSIGNED')
+    import_meshes = BoolProperty(
+        name="Import meshes",
+        default=False,
+        subtype='UNSIGNED')
     filter_glob = StringProperty(default="*.vmdl_c", options={'HIDDEN'})
 
     def execute(self, context):
@@ -129,13 +146,24 @@ class VmdlImporter_OT_operator(bpy.types.Operator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-classes = (VmdlImporter_OT_operator, VmeshImporter_OT_operator,MDLImporter_OT_operator)
+
+classes = (
+    VmdlImporter_OT_operator,
+    VmeshImporter_OT_operator,
+    MDLImporter_OT_operator)
 register_, unregister_ = bpy.utils.register_classes_factory(classes)
 
+
 def menu_import(self, context):
-    self.layout.operator(MDLImporter_OT_operator.bl_idname, text="Source model (.mdl)")
-    self.layout.operator(VmeshImporter_OT_operator.bl_idname, text="source2 mesh (.vmesh_c)")
-    self.layout.operator(VmdlImporter_OT_operator.bl_idname, text="source2 model (.vmdl_c)")
+    self.layout.operator(
+        MDLImporter_OT_operator.bl_idname,
+        text="Source model (.mdl)")
+    self.layout.operator(
+        VmeshImporter_OT_operator.bl_idname,
+        text="source2 mesh (.vmesh_c)")
+    self.layout.operator(
+        VmdlImporter_OT_operator.bl_idname,
+        text="source2 model (.vmdl_c)")
 
 
 def register():

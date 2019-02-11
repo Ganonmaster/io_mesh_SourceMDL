@@ -36,12 +36,9 @@ class SourceMdlFileDataV10:
         self.sequence_group_count = 0
         self.sequence_group_offset = 0
 
-
-
         self.texture_count = 0
         self.texture_offset = 0
         self.texture_data_offset = 0
-
 
         self.skin_reference_count = 0
         self.skin_family_count = 0
@@ -171,7 +168,8 @@ class SourceMdlFileDataV10:
                       *(get_class_var_name(self, arg).title().replace('_', ' '), ':', arg) if not fname else (
                           fname, ':', arg))
             else:
-                print(*(get_class_var_name(self, arg).title(), ':', arg) if not fname else (fname, ':', arg))
+                print(*(get_class_var_name(self, arg).title(), ':', arg)
+                      if not fname else (fname, ':', arg))
 
         print('SourceMdlFileData:')
         iprint(1, self.id)
@@ -188,6 +186,7 @@ class SourceMdlFileDataV10:
     def __repr__(self):
         return pformat(self.__dict__)
 
+
 class SourceMdlBone:
 
     def __init__(self):
@@ -202,7 +201,6 @@ class SourceMdlBone:
         self.pos_scale = SourceVector()
         self.rot_scale = SourceVector()
 
-
     def read(self, reader: ByteIO, mdl: SourceMdlFileDataV10):
         self.boneOffset = reader.tell()
         self.name = reader.read_ascii_string(32)
@@ -215,8 +213,9 @@ class SourceMdlBone:
         mdl.bones.append(self)
 
     def __repr__(self):
-        return '<Bone "{}" pos:{} rot: {}>'.format(self.name,self.position.as_rounded(2),
-                                                                 self.rotation.as_rounded(2),)
+        return '<Bone "{}" pos:{} rot: {}>'.format(self.name, self.position.as_rounded(2),
+                                                   self.rotation.as_rounded(2),)
+
 
 class SourceMdlBoneController:
     def __init__(self):

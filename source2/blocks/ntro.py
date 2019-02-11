@@ -71,15 +71,16 @@ class NTROStruct(Dummy):
         self.fields = []  # type: List[NTROStructField]
 
     def __repr__(self):
-        return '<Struct name:"{}"{} SID:{} sizeof: {} id:{}>'.format(self.name,' inhernited {}'.format(self.ntro_block.get_struct_by_id(self.base_struct_id)) if self.base_struct_id else"", self.s_id, self.disc_size,
-                                                                   self.base_struct_id)
+        return '<Struct name:"{}"{} SID:{} sizeof: {} id:{}>'.format(self.name, ' inhernited {}'.format(self.ntro_block.get_struct_by_id(self.base_struct_id)) if self.base_struct_id else"", self.s_id, self.disc_size,
+                                                                     self.base_struct_id)
 
     def read(self, reader: ByteIO):
         self.introspection_version = reader.read_int32()
         self.s_id = reader.read_int32()
         entry = reader.tell()
         self.name_offset = reader.read_int32()
-        self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+        self.name = reader.read_from_offset(
+            entry + self.name_offset, reader.read_ascii_string)
         self.disc_crc = reader.read_int32()
         self.user_version = reader.read_int32()
         self.disc_size = reader.read_int16()
@@ -102,10 +103,10 @@ class NTROStruct(Dummy):
         struct_data = {}
         entry = reader.tell()
         for field in self.fields:
-            reader.seek(entry+field.on_disc_size)
+            reader.seek(entry + field.on_disc_size)
             struct_data[field.name] = field.read_field(reader)
         # print(struct_data)
-        reader.seek(entry+self.disc_size)
+        reader.seek(entry + self.disc_size)
         # print(struct_data)
         return struct_data
 
@@ -134,17 +135,20 @@ class NTROStructField(Dummy):
 
     def __repr__(self):
         c_type = self.type.name
-        if self.type == 1 and self.struct.ntro_block.get_struct_by_id(self.data_type):
-            c_type = self.struct.ntro_block.get_struct_by_id(self.data_type).name
+        if self.type == 1 and self.struct.ntro_block.get_struct_by_id(
+                self.data_type):
+            c_type = self.struct.ntro_block.get_struct_by_id(
+                self.data_type).name
         return '<Field name:"{}" {} type:{} level:{}>'.format(self.name, "" if not self.indirection_level else (
-                "array of" if self.indirection_bytes[0] == 0x04 else (
+            "array of" if self.indirection_bytes[0] == 0x04 else (
                 "pointer to" if self.indirection_bytes[0] == 0x03 else "")), c_type, self.indirection_level)
 
-    def read(self, reader: ByteIO,block_info:InfoBlock = None):
+    def read(self, reader: ByteIO, block_info: InfoBlock = None):
         self.info_block = block_info
         entry = reader.tell()
         self.name_offset = reader.read_int32()
-        self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+        self.name = reader.read_from_offset(
+            entry + self.name_offset, reader.read_ascii_string)
         self.count = reader.read_int16()
         self.on_disc_size = reader.read_int16()
         entry = reader.tell()
@@ -161,13 +165,16 @@ class NTROStructField(Dummy):
 
     def read_field(self, reader: ByteIO):
         count = self.count
-        if count == 0: count = 1
+        if count == 0:
+            count = 1
         exit_point = 0
         if self.indirection_bytes:
             if self.indirection_level > 1:
-                raise NotImplementedError('More than one indirection, not yet handled')
+                raise NotImplementedError(
+                    'More than one indirection, not yet handled')
             if self.count > 0:
-                raise NotImplementedError('Indirection.Count > 0 && field.Count > 0')
+                raise NotImplementedError(
+                    'Indirection.Count > 0 && field.Count > 0')
             indir = self.indirection_bytes[0]
             entry = reader.tell()
             offset = reader.read_uint32()
@@ -177,9 +184,9 @@ class NTROStructField(Dummy):
                 if not offset:
                     return None
                 exit_point = reader.tell()
-                    # with reader.save_current_pos():
-                    #     reader.seek(entry+offset)
-                    # return self.read_field_data(reader)
+                # with reader.save_current_pos():
+                #     reader.seek(entry+offset)
+                # return self.read_field_data(reader)
             elif indir == 0x04:
                 # data = []
                 count = reader.read_uint32()
@@ -191,11 +198,13 @@ class NTROStructField(Dummy):
                 #             data.append(self.read_field(reader))
                 #         return data
             else:
-                raise NotImplementedError("Unknown indirection. ({0})".format(hex(indir)))
+                raise NotImplementedError(
+                    "Unknown indirection. ({0})".format(
+                        hex(indir)))
             if self.count > 0 and self.indirection_level > 0:
                 array = []
                 with reader.save_current_pos():
-                    reader.seek(entry+offset)
+                    reader.seek(entry + offset)
                     for _ in range(count):
                         data = self.read_field_data(reader)
                         array.append(data)
@@ -205,7 +214,7 @@ class NTROStructField(Dummy):
             else:
                 array = []
                 with reader.save_current_pos():
-                    reader.seek(entry+offset)
+                    reader.seek(entry + offset)
                     for _ in range(count):
                         data = self.read_field_data(reader)
                         array.append(data)
@@ -243,7 +252,8 @@ class NTROStructField(Dummy):
         if self.type == KeyValueDataType.NAME or self.type == KeyValueDataType.STRING:
             entry = reader.tell()
             offset = reader.read_uint32()
-            return reader.read_from_offset(entry + offset, reader.read_ascii_string)
+            return reader.read_from_offset(
+                entry + offset, reader.read_ascii_string)
         if self.type == KeyValueDataType.VECTOR2:
             return SourceVector2D().read(reader)
         if self.type == KeyValueDataType.VECTOR3:
@@ -259,7 +269,7 @@ class NTROStructField(Dummy):
             enum = self.struct.ntro_block.get_struct_by_id(self.data_type)
             return enum.get(value)
         if self.type == KeyValueDataType.Matrix3x4 or self.type == KeyValueDataType.Matrix3x4a:
-            matrix = Matrix(3,4)
+            matrix = Matrix(3, 4)
             matrix.read(reader)
             return matrix
         if self.type == KeyValueDataType.CTransform:
@@ -267,17 +277,20 @@ class NTROStructField(Dummy):
             ct.read(reader)
             return ct
         if self.type == KeyValueDataType.BOOLEAN:
-            return reader.read_int8()>0
-        raise NotImplementedError("Don't know how to handle {} type".format(self.type.name))
+            return reader.read_int8() > 0
+        raise NotImplementedError(
+            "Don't know how to handle {} type".format(
+                self.type.name))
 
     def as_c_struct_member(self):
         c_type = kv_type_to_c_type.get(self.type, None)
         if self.type == 1:
-            c_type = self.struct.ntro_block.get_struct_by_id(self.data_type).name
+            c_type = self.struct.ntro_block.get_struct_by_id(
+                self.data_type).name
         return '{} {}{}; //{}'.format(c_type if self.type != 3 else c_type + "*", self.name,
-                                     "" if not self.indirection_level else ("[{}]".format(self.count) if
-                                                                            self.indirection_bytes[0] == 0x04 else ""),
-                                     self.count)
+                                      "" if not self.indirection_level else ("[{}]".format(self.count) if
+                                                                             self.indirection_bytes[0] == 0x04 else ""),
+                                      self.count)
 
 
 class NTROEnum(Dummy):
@@ -295,7 +308,8 @@ class NTROEnum(Dummy):
         self.fields = []  # type: List[NTROEnumField]
 
     def __repr__(self):
-        return '<Enum {} SID:{} field count:{}>'.format(self.name, self.s_id, self.field_count)
+        return '<Enum {} SID:{} field count:{}>'.format(
+            self.name, self.s_id, self.field_count)
 
     def as_c_enum(self):
         buff = 'enum '
@@ -305,17 +319,18 @@ class NTROEnum(Dummy):
         buff += '}\n' if self.fields else ""
         return buff
 
-    def get(self,val):
+    def get(self, val):
         for field in self.fields:
             if field.field_value == val:
-                return (field.name,field.field_value)
+                return (field.name, field.field_value)
 
     def read(self, reader: ByteIO):
         self.introspection_version = reader.read_int32()
         self.s_id = reader.read_int32()
         entry = reader.tell()
         self.name_offset = reader.read_int32()
-        self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+        self.name = reader.read_from_offset(
+            entry + self.name_offset, reader.read_ascii_string)
         self.disc_crc = reader.read_int32()
         self.user_version = reader.read_uint32()
         entry = reader.tell()
@@ -346,5 +361,6 @@ class NTROEnumField(Dummy):
     def read(self, reader: ByteIO):
         entry = reader.tell()
         self.name_offset = reader.read_int32()
-        self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+        self.name = reader.read_from_offset(
+            entry + self.name_offset, reader.read_ascii_string)
         self.field_value = reader.read_int32()

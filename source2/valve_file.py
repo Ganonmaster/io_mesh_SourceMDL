@@ -10,7 +10,6 @@ from .blocks.common import SourceVector
 from .blocks.header import CompiledHeader, InfoBlock
 
 
-
 class ValveFile:
 
     def __init__(self, filepath):
@@ -43,28 +42,33 @@ class ValveFile:
             print(block_info)
             if block_info.block_name == 'RERL':
                 with self.reader.save_current_pos():
-                    self.reader.seek(block_info.entry + block_info.block_offset)
-                    self.rerl.read(self.reader,block_info)
+                    self.reader.seek(
+                        block_info.entry + block_info.block_offset)
+                    self.rerl.read(self.reader, block_info)
                     # print(self.rerl)
             if block_info.block_name == 'NTRO':
                 with self.reader.save_current_pos():
-                    self.reader.seek(block_info.entry + block_info.block_offset)
-                    self.nrto.read(self.reader,block_info)
+                    self.reader.seek(
+                        block_info.entry + block_info.block_offset)
+                    self.nrto.read(self.reader, block_info)
 
             if block_info.block_name == 'REDI':
                 with self.reader.save_current_pos():
-                    self.reader.seek(block_info.entry + block_info.block_offset)
-                    self.redi.read(self.reader,block_info)
+                    self.reader.seek(
+                        block_info.entry + block_info.block_offset)
+                    self.redi.read(self.reader, block_info)
                     # print(self.redi)
             if block_info.block_name == 'VBIB':
                 with self.reader.save_current_pos():
-                    self.reader.seek(block_info.entry + block_info.block_offset)
-                    self.vbib.read(self.reader,block_info)
+                    self.reader.seek(
+                        block_info.entry + block_info.block_offset)
+                    self.vbib.read(self.reader, block_info)
                     # print(self.vbib)
             if block_info.block_name == 'DATA':
                 with self.reader.save_current_pos():
-                    self.reader.seek(block_info.entry + block_info.block_offset)
-                    self.data.read(self.reader,block_info)
+                    self.reader.seek(
+                        block_info.entry + block_info.block_offset)
+                    self.data.read(self.reader, block_info)
                     pprint(self.data.data)
 
     def dump_structs(self, file: TextIO):
@@ -118,11 +122,12 @@ struct RGB
     def check_external_resources(self):
         for block in self.rerl.resources:
             name = os.path.basename(block.resource_name)
-            if os.path.exists(os.path.join(self.filepath,name+'_c')):
-                self.available_resources[name] = os.path.abspath(os.path.join(self.filepath,name+'_c'))
-                print('Found',name)
+            if os.path.exists(os.path.join(self.filepath, name + '_c')):
+                self.available_resources[name] = os.path.abspath(
+                    os.path.join(self.filepath, name + '_c'))
+                print('Found', name)
             else:
-                print('Can\'t find',name)
+                print('Can\'t find', name)
 
 
 def quaternion_to_euler_angle(w, x, y, z):
@@ -141,7 +146,8 @@ def quaternion_to_euler_angle(w, x, y, z):
     t4 = +1.0 - 2.0 * (ysqr + z * z)
     Z = math.degrees(math.atan2(t3, t4))
 
-    return SourceVector(X,Y,Z)
+    return SourceVector(X, Y, Z)
+
 
 if __name__ == '__main__':
     with open('log.log', "w") as f:  # replace filepath & filename
@@ -158,7 +164,8 @@ if __name__ == '__main__':
 
             vmdl = ValveFile(model)
             vmdl.read_block_info()
-            vmdl.dump_structs(open("structures/{}.h".format(model.split('.')[-1]), 'w'))
+            vmdl.dump_structs(
+                open("structures/{}.h".format(model.split('.')[-1]), 'w'))
             vmdl.dump_resources()
             vmdl.check_external_resources()
             # print(vmdl.available_resources)
@@ -169,7 +176,12 @@ if __name__ == '__main__':
             bone_rotations = model_skeleton['m_boneRotParent']
             bone_parents = model_skeleton['m_nParent']
             for n in range(len(bone_names)):
-                print(bone_names[n],'parent -', bone_names[bone_parents[n]], bone_parents[n], bone_positions[n], quaternion_to_euler_angle(*bone_rotations[n].as_list))
+                print(bone_names[n],
+                      'parent -',
+                      bone_names[bone_parents[n]],
+                      bone_parents[n],
+                      bone_positions[n],
+                      quaternion_to_euler_angle(*bone_rotations[n].as_list))
             # print(bone_parents)
             # print(vmdl.available_resources)
             # print(vmdl.header)

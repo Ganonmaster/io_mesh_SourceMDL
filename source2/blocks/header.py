@@ -26,7 +26,8 @@ class InfoBlock(Dummy):
         self.absolute_offset = 0
 
     def __repr__(self):
-        return '<InfoBlock:{} absolute offset:{} size:{}>'.format(self.block_name,self.absolute_offset,self.block_size)
+        return '<InfoBlock:{} absolute offset:{} size:{}>'.format(
+            self.block_name, self.absolute_offset, self.block_size)
 
     def read(self, reader: ByteIO):
         self.block_name = reader.read_fourcc()

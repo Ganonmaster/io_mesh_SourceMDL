@@ -7,7 +7,7 @@ from ..valve_file import ValveFile
 
 
 class RERL(Dummy):
-    def __init__(self, valve_file:ValveFile):
+    def __init__(self, valve_file: ValveFile):
         self.valve_file = valve_file
         self.resource_entry_offset = 0
         self.resource_count = 0
@@ -21,7 +21,7 @@ class RERL(Dummy):
         for res in self.resources:
             print('\t', res)
 
-    def read(self, reader: ByteIO,block_info:InfoBlock = None):
+    def read(self, reader: ByteIO, block_info: InfoBlock = None):
         self.info_block = block_info
         self.entry = reader.tell()
         self.resource_entry_offset = reader.read_int32()
@@ -49,7 +49,5 @@ class RERLResource(Dummy):
         entry = reader.tell()
         self.resource_name_offset = reader.read_int64()
         if self.resource_name_offset:
-            self.resource_name = reader.read_from_offset(entry + self.resource_name_offset, reader.read_ascii_string)
-
-
-
+            self.resource_name = reader.read_from_offset(
+                entry + self.resource_name_offset, reader.read_ascii_string)

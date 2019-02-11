@@ -1,9 +1,9 @@
+import bpy
+import os.path
+from .blocks.vbib import *
 import sys
 
 sys.path.append(r'E:\PYTHON\io_mesh_SourceMDL')
-from .blocks.vbib import *
-import os.path
-import bpy
 
 # model_path = r'E:\PYTHON\io_mesh_SourceMDL/test_data/source2/bad_ancient_destruction_pitrim_model.vmesh_c'
 
@@ -17,7 +17,7 @@ class VMESH_IO:
         self.mesh_name = os.path.basename(vmesh_path).split('.')[0]
         # self.build_meshes()
 
-    def build_meshes(self,bone_list = None,remap_list = None):
+    def build_meshes(self, bone_list=None, remap_list=None):
         for n, (v_mesh, indexes) in enumerate(
                 zip(self.valve_file.vbib.vertex_buffer,
                     self.valve_file.vbib.index_buffer)):  # type: int,VertexBuffer,IndexBuffer
@@ -51,10 +51,12 @@ class VMESH_IO:
                 uv_data[i].uv = u
             if bone_list:
                 for n, vertex in enumerate(v_mesh.vertexes):
-                    for bone_index, weight in zip(vertex.boneWeight.bone, vertex.boneWeight.weight):
-                        if weight>0:
+                    for bone_index, weight in zip(
+                            vertex.boneWeight.bone, vertex.boneWeight.weight):
+                        if weight > 0:
                             bone_name = bone_list[remap_list[bone_index]]
-                            weight_groups[bone_name].add([n], weight, 'REPLACE')
+                            weight_groups[bone_name].add(
+                                [n], weight, 'REPLACE')
             bpy.ops.object.shade_smooth()
             mesh.normals_split_custom_set(normals)
             mesh.use_auto_smooth = True

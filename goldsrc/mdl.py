@@ -8,7 +8,8 @@ from .mdl_data import SourceMdlFileDataV10, SourceMdlBone, SourceMdlBoneControll
 class SourceMdlFile10:
 
     def __init__(self, filepath):
-        self.reader = ByteIO(path=filepath + '.mdl', copy_data_from_handle=False, )
+        self.reader = ByteIO(path=filepath +
+                             '.mdl', copy_data_from_handle=False, )
         self.filename = os.path.basename(filepath + '.mdl')[:-4]
         self.file_data = SourceMdlFileDataV10()
         self.file_data.read(self.reader)
@@ -30,7 +31,10 @@ class SourceMdlFile10:
 
     def read_bones(self):
         if self.file_data.bone_count > 0:
-            pb = ProgressBar(desc='Reading bones', max_=self.file_data.bone_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading bones',
+                max_=self.file_data.bone_count,
+                len_=20)
             self.reader.seek(self.file_data.bone_offset, 0)
             for i in range(self.file_data.bone_count):
                 pb.draw()
@@ -40,7 +44,10 @@ class SourceMdlFile10:
 
     def read_bone_controllers(self):
         if self.file_data.bone_controller_count > 0:
-            pb = ProgressBar(desc='Reading Bone Controllers', max_=self.file_data.bone_controller_count, len_=20)
+            pb = ProgressBar(
+                desc='Reading Bone Controllers',
+                max_=self.file_data.bone_controller_count,
+                len_=20)
             for _ in range(self.file_data.bone_controller_count):
                 pb.draw()
                 SourceMdlBoneController().read(self.reader, self.file_data)

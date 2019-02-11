@@ -32,7 +32,8 @@ class StudioHDRFlags(Flags):
     #  models when we change materials.
     STUDIOHDR_FLAGS_USES_ENV_CUBEMAP = (1 << 1)
 
-    #  Use this when there are translucent parts to the model but we're not going to sort it
+    # Use this when there are translucent parts to the model but we're not
+    # going to sort it
     STUDIOHDR_FLAGS_FORCE_OPAQUE = (1 << 2)
 
     #  Use this when we want to render the opaque parts during the opaque pass
@@ -57,11 +58,13 @@ class StudioHDRFlags(Flags):
     STUDIOHDR_FLAGS_USES_BUMPMAPPING = (1 << 7)
 
     #  NOTE:  This flag is set when we should use the actual materials on the shadow LOD
-    #  instead of overriding them with the default one (necessary for translucent shadows)
+    # instead of overriding them with the default one (necessary for
+    # translucent shadows)
     STUDIOHDR_FLAGS_USE_SHADOWLOD_MATERIALS = (1 << 8)
 
     #  NOTE:  This flag is set when we should use the actual materials on the shadow LOD
-    #  instead of overriding them with the default one (necessary for translucent shadows)
+    # instead of overriding them with the default one (necessary for
+    # translucent shadows)
     STUDIOHDR_FLAGS_OBSOLETE = (1 << 9)
 
     STUDIOHDR_FLAGS_UNUSED = (1 << 10)
@@ -69,7 +72,8 @@ class StudioHDRFlags(Flags):
     #  NOTE:  This flag is set at mdl build time
     STUDIOHDR_FLAGS_NO_FORCED_FADE = (1 << 11)
 
-    #  NOTE:  The npc will lengthen the viseme check to always include two phonemes
+    # NOTE:  The npc will lengthen the viseme check to always include two
+    # phonemes
     STUDIOHDR_FLAGS_FORCE_PHONEME_CROSSFADE = (1 << 12)
 
     #  This flag is set when the .qc has $constantdirectionallight in it
@@ -78,7 +82,8 @@ class StudioHDRFlags(Flags):
     #  only valid if STUDIOHDR_FLAGS_STATIC_PROP is also set
     STUDIOHDR_FLAGS_CONSTANT_DIRECTIONAL_LIGHT_DOT = (1 << 13)
 
-    #  Flag to mark delta flexes as already converted from disk format to memory format
+    # Flag to mark delta flexes as already converted from disk format to
+    # memory format
     STUDIOHDR_FLAGS_FLEXES_CONVERTED = (1 << 14)
 
     #  Indicates the studiomdl was built in preview mode
@@ -90,7 +95,8 @@ class StudioHDRFlags(Flags):
     #  Don't cast shadows from this model (useful on first-person models)
     STUDIOHDR_FLAGS_DO_NOT_CAST_SHADOWS = (1 << 17)
 
-    #  alpha textures should cast shadows in vrad on this model (ONLY prop_static!)
+    # alpha textures should cast shadows in vrad on this model (ONLY
+    # prop_static!)
     STUDIOHDR_FLAGS_CAST_TEXTURE_SHADOWS = (1 << 18)
 
     STUDIOHDR_FLAGS_SUBDIVISION_SURFACE = (1 << 19)
@@ -248,7 +254,9 @@ class SourceMdlFileData(SourceBase):
                 self.id = reader.read_fourcc()
                 print('MDL FILE WAS "PROTECTED", but screew it :P')
             else:
-                raise NotImplementedError('MDL format {} is not supported!'.format(self.id))
+                raise NotImplementedError(
+                    'MDL format {} is not supported!'.format(
+                        self.id))
         self.version = reader.read_uint32()
         print('Found MDL version', self.version)
         self.checksum = reader.read_uint32()
@@ -328,7 +336,8 @@ class SourceMdlFileData(SourceBase):
         self.surface_prop_offset = reader.read_uint32()
 
         if self.surface_prop_offset > 0:
-            self.surface_prop_name = reader.read_from_offset(self.surface_prop_offset, reader.read_ascii_string)
+            self.surface_prop_name = reader.read_from_offset(
+                self.surface_prop_offset, reader.read_ascii_string)
 
         self.key_value_offset = reader.read_uint32()
         self.key_value_size = reader.read_uint32()
@@ -424,7 +433,8 @@ class SourceMdlFileData(SourceBase):
                       *(get_class_var_name(self, arg).title().replace('_', ' '), ':', arg) if not fname else (
                           fname, ':', arg))
             else:
-                print(*(get_class_var_name(self, arg).title(), ':', arg) if not fname else (fname, ':', arg))
+                print(*(get_class_var_name(self, arg).title(), ':', arg)
+                      if not fname else (fname, ':', arg))
 
         print('SourceMdlFileData:')
         iprint(1, self.id)
@@ -542,7 +552,8 @@ class SourceMdlFileDataV53(SourceMdlFileData):
         self.surface_prop_offset = reader.read_uint32()
 
         if self.surface_prop_offset > 0:
-            self.surface_prop_name = reader.read_from_offset(self.surface_prop_offset, reader.read_ascii_string)
+            self.surface_prop_name = reader.read_from_offset(
+                self.surface_prop_offset, reader.read_ascii_string)
 
         self.key_value_offset = reader.read_uint32()
         self.key_value_size = reader.read_uint32()
@@ -608,9 +619,11 @@ class SourceMdlFileDataV53(SourceMdlFileData):
         if self.vvd_offset != 0 and self.vtx_offset != 0:
             with reader.save_current_pos():
                 reader.seek(self.vtx_offset)
-                self.vtx = vtx.SourceVtxFile49(file=ByteIO(byte_object=reader.read_bytes(-1)))
+                self.vtx = vtx.SourceVtxFile49(
+                    file=ByteIO(byte_object=reader.read_bytes(-1)))
                 reader.seek(self.vvd_offset)
-                self.vvd = vvd.SourceVvdFile49(file=ByteIO(byte_object=reader.read_bytes(-1)))
+                self.vvd = vvd.SourceVvdFile49(
+                    file=ByteIO(byte_object=reader.read_bytes(-1)))
 
         if self.body_part_count == 0 and self.local_sequence_count > 0:
             self.mdl_file_only_has_animations = True
@@ -634,15 +647,19 @@ class SourceMdlBoneFlags(Flags):
     PHYSICALLY_SIMULATED = 0x01  # bone is physically simulated when physics are active
     PHYSICS_PROCEDURAL = 0x02  # procedural when physics is active
     ALWAYS_PROCEDURAL = 0x04  # bone is always procedurally animated
-    SCREEN_ALIGN_SPHERE = 0x08  # bone aligns to the screen, not constrained in motion.
-    SCREEN_ALIGN_CYLINDER = 0x10  # bone aligns to the screen, constrained by it's own axis.
+    # bone aligns to the screen, not constrained in motion.
+    SCREEN_ALIGN_SPHERE = 0x08
+    # bone aligns to the screen, constrained by it's own axis.
+    SCREEN_ALIGN_CYLINDER = 0x10
 
     # BONE_USED_MASK = 0x0007FF00
     USED_BY_ANYTHING = 0x0007FF00
     USED_BY_HITBOX = 0x00000100  # bone (or child) is used by a hit box
-    USED_BY_ATTACHMENT = 0x00000200  # bone (or child) is used by an attachment point
+    # bone (or child) is used by an attachment point
+    USED_BY_ATTACHMENT = 0x00000200
     USED_BY_VERTEX_MASK = 0x0003FC00
-    USED_BY_VERTEX_LOD0 = 0x00000400  # bone (or child) is used by the toplevel model via skinned vertex
+    # bone (or child) is used by the toplevel model via skinned vertex
+    USED_BY_VERTEX_LOD0 = 0x00000400
     USED_BY_VERTEX_LOD1 = 0x00000800
     USED_BY_VERTEX_LOD2 = 0x00001000
     USED_BY_VERTEX_LOD3 = 0x00002000
@@ -650,7 +667,8 @@ class SourceMdlBoneFlags(Flags):
     USED_BY_VERTEX_LOD5 = 0x00008000
     USED_BY_VERTEX_LOD6 = 0x00010000
     USED_BY_VERTEX_LOD7 = 0x00020000
-    USED_BY_BONE_MERGE = 0x00040000  # bone is available for bone merge to occur against it
+    # bone is available for bone merge to occur against it
+    USED_BY_BONE_MERGE = 0x00040000
 
 
 class SourceContents(Flags):
@@ -658,18 +676,22 @@ class SourceContents(Flags):
     CONTENTS_SOLID = 0x1  # an eye is never valid in a solid
     CONTENTS_WINDOW = 0x2  # translucent, but not watery (glass)
     CONTENTS_AUX = 0x4
-    CONTENTS_GRATE = 0x8  # alpha-tested "grate" textures.  Bullets/sight pass through, but solids don't
+    # alpha-tested "grate" textures.  Bullets/sight pass through, but solids
+    # don't
+    CONTENTS_GRATE = 0x8
     CONTENTS_SLIME = 0x10
     CONTENTS_WATER = 0x20
     CONTENTS_BLOCKLOS = 0x40  # block AI line of sight
-    CONTENTS_OPAQUE = 0x80  # things that cannot be seen through (may be non-solid though)
+    # things that cannot be seen through (may be non-solid though)
+    CONTENTS_OPAQUE = 0x80
     CONTENTS_TESTFOGVOLUME = 0x100
     CONTENTS_UNUSED = 0x200
 
-    # unused 
+    # unused
     # NOTE: If it's visible, grab from the top + update LAST_VISIBLE_CONTENTS
     # if not visible, then grab from the bottom.
-    # CONTENTS_OPAQUE + SURF_NODRAW count as CONTENTS_OPAQUE (shadow-casting toolsblocklight textures)
+    # CONTENTS_OPAQUE + SURF_NODRAW count as CONTENTS_OPAQUE (shadow-casting
+    # toolsblocklight textures)
     CONTENTS_BLOCKLIGHT = 0x400
 
     CONTENTS_TEAM1 = 0x800  # per team contents used to differentiate collisions
@@ -704,14 +726,19 @@ class SourceContents(Flags):
     CONTENTS_LADDER = 0x20000000
     CONTENTS_HITBOX = 0x40000000  # use accurate hitboxes on trace
 
-    #  NOTE: These are stored in a short in the engine now.  Don't use more than 16 bits
+    # NOTE: These are stored in a short in the engine now.  Don't use more
+    # than 16 bits
     SURF_LIGHT = 0x0001  # value will hold the light strength
-    SURF_SKY2D = 0x0002  # don't draw, indicates we should skylight + draw 2d sky but not draw the 3D skybox
+    # don't draw, indicates we should skylight + draw 2d sky but not draw the
+    # 3D skybox
+    SURF_SKY2D = 0x0002
     SURF_SKY = 0x0004  # don't draw, but add to skybox
     SURF_WARP = 0x0008  # turbulent water warp
     SURF_TRANS = 0x0010
     SURF_NOPORTAL = 0x0020  # the surface can not have a portal placed on it
-    SURF_TRIGGER = 0x0040  # FIXME: This is an xbox hack to work around elimination of trigger surfaces, which breaks occluders
+    # FIXME: This is an xbox hack to work around elimination of trigger
+    # surfaces, which breaks occluders
+    SURF_TRIGGER = 0x0040
     SURF_NODRAW = 0x0080  # don't bother referencing the texture
 
     SURF_HINT = 0x0100  # make a primary bsp splitter
@@ -769,8 +796,9 @@ class SourceMdlBone(SourceBase):
     def size(self):
         if self.parent.version >= 53:
             return 4 + 4 + (4 * 6) + 12 + (4 * 4) + (3 * 4) + (3 * 6) + \
-                   (4 * 3 * 4) + 4 * 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 * 7
-        return 4 + 4 + (4 * 6) + 12 + (4 * 4) + (3 * 4) + (3 * 6) + (4 * 3 * 4) + 4 * 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 * 8
+                (4 * 3 * 4) + 4 * 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 * 7
+        return 4 + 4 + (4 * 6) + 12 + (4 * 4) + (3 * 4) + (3 * 6) + \
+            (4 * 3 * 4) + 4 * 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 * 8
 
     def read(self, reader: ByteIO, mdl: SourceMdlFileData):
         self.boneOffset = reader.tell()
@@ -828,8 +856,10 @@ class SourceMdlBone(SourceBase):
     def __repr__(self):
         return '<Bone "{}" {} pos:{} rot: {} content:{}>'.format(self.name,
                                                                  self.flags.to_simple_str(),
-                                                                 self.position.as_rounded(2),
-                                                                 self.rotation.as_rounded(2),
+                                                                 self.position.as_rounded(
+                                                                     2),
+                                                                 self.rotation.as_rounded(
+                                                                     2),
                                                                  self.contents.to_simple_str())
 
 
@@ -909,7 +939,8 @@ class SourceMdlJiggleBone(SourceBase):
         return self
 
     def __repr__(self):
-        return '<JiggleBone flags:{0} mass:{1.tipMass} length:{1.length}>'.format(self.flags.to_simple_str(), self)
+        return '<JiggleBone flags:{0} mass:{1.tipMass} length:{1.length}>'.format(
+            self.flags.to_simple_str(), self)
 
 
 class SourceMdlAxisInterpBone(SourceBase):
@@ -944,14 +975,17 @@ class SourceMdlQuatInterpBone(SourceBase):
         self.triggerCount = reader.read_uint32()
         self.triggerOffset = reader.read_uint32()
         if self.triggerCount > 0 and self.triggerOffset != 0:
-            self.theTriggers = [SourceMdlQuatInterpBoneInfo().read(reader) for _ in range(self.triggerCount)]
+            self.theTriggers = [SourceMdlQuatInterpBoneInfo().read(
+                reader) for _ in range(self.triggerCount)]
         return self
 
     def __str__(self):
-        return '<QuatInterpBone control bone index:{}>'.format(self.controlBoneIndex)
+        return '<QuatInterpBone control bone index:{}>'.format(
+            self.controlBoneIndex)
 
     def __repr__(self):
-        return '<QuatInterpBone control index:{}>'.format(self.controlBoneIndex)
+        return '<QuatInterpBone control index:{}>'.format(
+            self.controlBoneIndex)
 
 
 class SourceMdlQuatInterpBoneInfo(SourceBase):
@@ -1010,7 +1044,8 @@ class SourceMdlFlexDesc(SourceBase):
         entry = reader.tell()
         self.name_offset = reader.read_uint32()
         if self.name_offset != 0:
-            self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+            self.name = reader.read_from_offset(
+                entry + self.name_offset, reader.read_ascii_string)
         pass
 
     def __repr__(self):
@@ -1035,11 +1070,13 @@ class SourceMdlFlexController(SourceBase):
         self.min = reader.read_float()
         self.max = reader.read_float()
         if self.typeOffset != 0:
-            self.theType = reader.read_from_offset(entry + self.typeOffset, reader.read_ascii_string)
+            self.theType = reader.read_from_offset(
+                entry + self.typeOffset, reader.read_ascii_string)
         else:
             self.theType = ''
         if self.nameOffset != 0:
-            self.theName = reader.read_from_offset(entry + self.nameOffset, reader.read_ascii_string)
+            self.theName = reader.read_from_offset(
+                entry + self.nameOffset, reader.read_ascii_string)
         else:
             self.theName = 'blank_name_' + str(len(mdl.flex_descs))
 
@@ -1078,7 +1115,8 @@ class SourceMdlFlexRule(SourceBase):
             mdl.flex_rules.append(self)
 
     def __repr__(self):
-        return '<Flex rule "{}" op count:{}>'.format(self.mdl.flex_descs[self.flex_index].name, self.op_count)
+        return '<Flex rule "{}" op count:{}>'.format(
+            self.mdl.flex_descs[self.flex_index].name, self.op_count)
 
 
 class FlexOpType(Enum):
@@ -1128,7 +1166,8 @@ class SourceMdlFlexOp(SourceBase):
         if self.op == FlexOpType.STUDIO_CONST:
             return '<FlexOp op:{} value:{}>'.format(self.op.name, self.value)
         else:
-            return '<FlexOp op:{} for "{}">'.format(self.op.name, self.mdl.flex_descs[self.index].name)
+            return '<FlexOp op:{} for "{}">'.format(
+                self.op.name, self.mdl.flex_descs[self.index].name)
 
 
 class SourceMdlAttachment(SourceBase):
@@ -1163,7 +1202,8 @@ class SourceMdlAttachment(SourceBase):
             self.name = reader.read_ascii_string(64)
         else:
             self.nameOffset = reader.read_uint32()
-            self.name = reader.read_from_offset(self.nameOffset + entry, reader.read_ascii_string)
+            self.name = reader.read_from_offset(
+                self.nameOffset + entry, reader.read_ascii_string)
             self.flags = reader.read_uint32()
             self.localBoneIndex = reader.read_uint32()
             try:
@@ -1232,7 +1272,8 @@ class SourceMdlBodyPart(SourceBase):
         mdl.body_parts.append(self)
 
     def __repr__(self):
-        return '<BodyPart name:"{}" model_path count:{} >'.format(self.name, self.model_count)
+        return '<BodyPart name:"{}" model_path count:{} >'.format(
+            self.name, self.model_count)
 
 
 class SourceMdlModel(SourceBase):
@@ -1351,7 +1392,8 @@ class SourceMdlEyeball(SourceBase):
     def read(self, reader: ByteIO, model: SourceMdlModel):
         entry = reader.tell()
         self.name_offset = reader.read_uint32()
-        self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+        self.name = reader.read_from_offset(
+            entry + self.name_offset, reader.read_ascii_string)
         self.bone_index = reader.read_uint32()
         self.org.read(reader)
         self.z_offset = reader.read_float()
@@ -1375,10 +1417,12 @@ class SourceMdlEyeball(SourceBase):
         model.eyeballs.append(self)
 
     def __str__(self):
-        return '<Eyeball name:"{}" bone:{} xyz:{}>'.format(self.name, self.bone_index, self.org.as_string)
+        return '<Eyeball name:"{}" bone:{} xyz:{}>'.format(
+            self.name, self.bone_index, self.org.as_string)
 
     def __repr__(self):
-        return '<Eyeball name:"{}" bone:{} xyz:{}>'.format(self.name, self.bone_index, self.org.as_string)
+        return '<Eyeball name:"{}" bone:{} xyz:{}>'.format(
+            self.name, self.bone_index, self.org.as_string)
 
 
 class SourceMdlMesh(SourceBase):
@@ -1403,8 +1447,10 @@ class SourceMdlMesh(SourceBase):
         self.model = model
         entry = reader.tell()
 
-        self.material_index, self.model_offset, self.vertex_count, self.vertex_index_start = reader.read_fmt('4I')
-        self.flex_count, self.flex_offset, self.material_type, self.material_param, self.id = reader.read_fmt('5I')
+        self.material_index, self.model_offset, self.vertex_count, self.vertex_index_start = reader.read_fmt(
+            '4I')
+        self.flex_count, self.flex_offset, self.material_type, self.material_param, self.id = reader.read_fmt(
+            '5I')
         self.center.read(reader)
         self.vertexData.read(reader)
         self.unused = [reader.read_uint32() for _ in range(8)]
@@ -1463,8 +1509,10 @@ class SourceMdlFlex(SourceBase):
 
     def read(self, reader: ByteIO, mesh: SourceMdlMesh):
         entry = reader.tell()
-        self.flex_desc_index, self.target0, self.target1, self.target2, self.target3 = reader.read_fmt('I4f')
-        self.vert_count, self.vert_offset, self.flex_desc_partner_index = reader.read_fmt('3I')
+        self.flex_desc_index, self.target0, self.target1, self.target2, self.target3 = reader.read_fmt(
+            'I4f')
+        self.vert_count, self.vert_offset, self.flex_desc_partner_index = reader.read_fmt(
+            '3I')
         # print('Reading', mesh.model.body_part.mdl.flex_descs[self.flex_desc_index].name, 'flex')
         self.vert_anim_type = reader.read_uint8()
         self.unused_char = reader.read_fmt('3B')
@@ -1478,7 +1526,8 @@ class SourceMdlFlex(SourceBase):
                 else:
                     vert_anim_type = SourceMdlVertAnim
                 for _ in range(self.vert_count):
-                    self.the_vert_anims.append(vert_anim_type().read(reader, self))
+                    self.the_vert_anims.append(
+                        vert_anim_type().read(reader, self))
 
         mesh.flexes.append(self)
         return self
@@ -1502,8 +1551,10 @@ class SourceMdlVertAnim(SourceBase):
 
     def read(self, reader: ByteIO, flex: SourceMdlFlex):
         self.index, self.speed, self.side = reader.read_fmt('hBB')
-        self.the_delta = [SourceFloat16bits().read(reader).float_value for _ in range(3)]
-        self.the_n_delta = [SourceFloat16bits().read(reader).float_value for _ in range(3)]
+        self.the_delta = [SourceFloat16bits().read(
+            reader).float_value for _ in range(3)]
+        self.the_n_delta = [SourceFloat16bits().read(
+            reader).float_value for _ in range(3)]
         return self
 
     def __repr__(self):
@@ -1541,10 +1592,12 @@ class SourceMdlTexture(SourceBase):
         self.unused1 = reader.read_uint32()
         self.material_pointer = reader.read_uint32()
         self.client_material_pointer = reader.read_uint32()
-        self.unused = [reader.read_uint32() for _ in range(10 if mdl.version < 53 else 5)]
+        self.unused = [reader.read_uint32()
+                       for _ in range(10 if mdl.version < 53 else 5)]
         with reader.save_current_pos():
             if self.name_offset != 0:
-                self.path_file_name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+                self.path_file_name = reader.read_from_offset(
+                    entry + self.name_offset, reader.read_ascii_string)
         mdl.textures.append(self)
 
     def __repr__(self):
@@ -1590,7 +1643,8 @@ class SourceMdlMouth(SourceBase):
         return self
 
     def __repr__(self):
-        return '<SourceMdlMouth bone:{} flex:{}  {}>'.format(self.bone, self.flex_desc_index, self.forward)
+        return '<SourceMdlMouth bone:{} flex:{}  {}>'.format(
+            self.bone, self.flex_desc_index, self.forward)
 
 
 class SourceBoneFlexDriver(SourceBase):
@@ -1644,8 +1698,13 @@ class SourceBoneFlexController(SourceBase):
 
 class FlexControllerRemapType(IntEnum):
     FLEXCONTROLLER_REMAP_PASSTHRU = 0
-    FLEXCONTROLLER_REMAP_2WAY = 1  # Control 0 -> ramps from 1-0 from 0->0.5. Control 1 -> ramps from 0-1 from 0.5->1
-    FLEXCONTROLLER_REMAP_NWAY = 2  # StepSize = 1 / (control count-1) Control n -> ramps from 0-1-0 from (n-1)*StepSize to n*StepSize to (n+1)*StepSize. A second control is needed to specify amount to use
+    # Control 0 -> ramps from 1-0 from 0->0.5. Control 1 -> ramps from 0-1
+    # from 0.5->1
+    FLEXCONTROLLER_REMAP_2WAY = 1
+    # StepSize = 1 / (control count-1) Control n -> ramps from 0-1-0 from
+    # (n-1)*StepSize to n*StepSize to (n+1)*StepSize. A second control is
+    # needed to specify amount to use
+    FLEXCONTROLLER_REMAP_NWAY = 2
     FLEXCONTROLLER_REMAP_EYELID = 2
 
 
@@ -1663,7 +1722,8 @@ class SourceFlexControllerUI(SourceBase):
     def read(self, reader: ByteIO):
         entry = reader.tell()
         self.name_offset = reader.read_int32()
-        self.name = reader.read_from_offset(entry + self.name_offset, reader.read_ascii_string)
+        self.name = reader.read_from_offset(
+            entry + self.name_offset, reader.read_ascii_string)
         self.index1, self.index2, self.index3 = reader.read_fmt('3i')
         self.stereo = reader.read_uint8()
         self.remap_type = FlexControllerRemapType(reader.read_uint8())
@@ -1686,4 +1746,5 @@ class FlexFrame:
         self.flexes = []  # type: List[SourceMdlFlex]
 
     def __repr__(self):
-        return '<FlexFrame {} flexes:{} mesh_data inds:{}>'.format(self.flex_name, self.flexes, self.vertex_offsets)
+        return '<FlexFrame {} flexes:{} mesh_data inds:{}>'.format(
+            self.flex_name, self.flexes, self.vertex_offsets)

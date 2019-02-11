@@ -36,7 +36,8 @@ class InputDependency(Dummy):
         self.flag = 0
 
     def __repr__(self):
-        return '<InputDependency "{}" in "{}">'.format(self.content_relative_name,self.content_search_path)
+        return '<InputDependency "{}" in "{}">'.format(
+            self.content_relative_name, self.content_search_path)
 
     def read(self, reader: ByteIO):
         entry = reader.tell()
@@ -69,7 +70,8 @@ class ArgumentDependency(Dummy):
         self.fingerprint_default = 0
 
     def __repr__(self):
-        return '<ArgumentDependencies "{}":{}>'.format(self.parameter_name, self.parameter_type)
+        return '<ArgumentDependencies "{}":{}>'.format(
+            self.parameter_name, self.parameter_type)
 
     def read(self, reader: ByteIO):
         entry = reader.tell()
@@ -98,12 +100,14 @@ class SpecialDependency(Dummy):
         self.user_data = 0
 
     def __repr__(self):
-        return '<SpecialDependency "{}":"{}">'.format(self.string, self.compiler_identifier)
+        return '<SpecialDependency "{}":"{}">'.format(
+            self.string, self.compiler_identifier)
 
     def read(self, reader: ByteIO):
         entry = reader.tell()
         self.string_offset = reader.read_int32()
-        self.string = reader.read_from_offset(entry + self.string_offset, reader.read_ascii_string)
+        self.string = reader.read_from_offset(
+            entry + self.string_offset, reader.read_ascii_string)
         entry = reader.tell()
         self.compiler_identifier_offset = reader.read_int32()
         self.compiler_identifier = reader.read_from_offset(entry + self.compiler_identifier_offset,
@@ -169,20 +173,22 @@ class ChildResource(Dummy):
         self.unk = 0
 
     def __repr__(self):
-        return '<ChildResource ID:{} "{}" unk:{}>'.format(self.id, self.resource_name,self.unk)
+        return '<ChildResource ID:{} "{}" unk:{}>'.format(
+            self.id, self.resource_name, self.unk)
 
     def read(self, reader: ByteIO):
         self.id = reader.read_uint64()
         entry = reader.tell()
         self.resource_name_offset = reader.read_int32()
         self.resource_name = reader.read_from_offset(entry + self.resource_name_offset,
-                                                                 reader.read_ascii_string)
-        self.unk =reader.read_uint32()
+                                                     reader.read_ascii_string)
+        self.unk = reader.read_uint32()
         a = 5
 
 
 class ChildResourceList(Dependencies):
     dependency = ChildResource
+
 
 class ExtraInt(Dummy):
     def __init__(self):
@@ -197,12 +203,13 @@ class ExtraInt(Dummy):
         entry = reader.tell()
         self.name_offset = reader.read_int32()
         self.name = reader.read_from_offset(entry + self.name_offset,
-                                                                 reader.read_ascii_string)
+                                            reader.read_ascii_string)
         self.value = reader.read_int32()
 
 
 class ExtraIntData(Dependencies):
     dependency = ExtraInt
+
 
 class ExtraFloat(Dummy):
     def __init__(self):
@@ -217,12 +224,13 @@ class ExtraFloat(Dummy):
         entry = reader.tell()
         self.name_offset = reader.read_int32()
         self.name = reader.read_from_offset(entry + self.name_offset,
-                                                                 reader.read_ascii_string)
+                                            reader.read_ascii_string)
         self.value = reader.read_float()
 
 
 class ExtraFloatData(Dependencies):
     dependency = ExtraFloat
+
 
 class ExtraString(Dummy):
     def __init__(self):
@@ -238,11 +246,11 @@ class ExtraString(Dummy):
         entry = reader.tell()
         self.name_offset = reader.read_int32()
         self.name = reader.read_from_offset(entry + self.name_offset,
-                                                                 reader.read_ascii_string)
+                                            reader.read_ascii_string)
         entry = reader.tell()
         self.value_offset = reader.read_int32()
         self.value = reader.read_from_offset(entry + self.value_offset,
-                                            reader.read_ascii_string)
+                                             reader.read_ascii_string)
 
 
 class ExtraStringData(Dependencies):

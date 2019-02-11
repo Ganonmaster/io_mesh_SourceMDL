@@ -34,18 +34,28 @@ class VTA:
                 vert = self.vvd.file_data.fixed_vertexes_by_lod[0][vert_index]
             else:
                 vert = self.vvd.file_data.vertexes[vert_index]
-            fileh.write("\t\t{} {} {}\n".format(vert_index, vert.position.as_string_smd, vert.normal.as_string_smd))
+            fileh.write(
+                "\t\t{} {} {}\n".format(
+                    vert_index,
+                    vert.position.as_string_smd,
+                    vert.normal.as_string_smd))
 
     def write_flex(self, fileh, flex_frame: FlexFrame, time):
 
         fileh.write('\ttime {} #{}\n'.format(time, flex_frame.flex_name))
-        for flex, vertex_offset in zip(flex_frame.flexes, flex_frame.vertex_offsets):
+        for flex, vertex_offset in zip(
+                flex_frame.flexes, flex_frame.vertex_offsets):
             for fvert in flex.the_vert_anims:  # type: SourceMdlVertAnim
                 vert_index = fvert.index
-                vert = self.vvd.file_data.vertexes[vert_index + vertex_offset]  # type: SourceVertex
+                # type: SourceVertex
+                vert = self.vvd.file_data.vertexes[vert_index + vertex_offset]
                 delta = vert.position + SourceVector(fvert.the_delta)
                 ndelta = vert.normal + SourceVector(fvert.the_n_delta)
-                fileh.write("\t\t{} {} {}\n".format(vert_index, delta.as_string_smd, ndelta.as_string_smd))
+                fileh.write(
+                    "\t\t{} {} {}\n".format(
+                        vert_index,
+                        delta.as_string_smd,
+                        ndelta.as_string_smd))
 
     def write_header(self, fileh):
         fileh.write('//Created with SourceIO\n')
@@ -55,7 +65,11 @@ class VTA:
         bones = self.mdl.file_data.bones  # type: List[SourceMdlBone]
         fileh.write('nodes\n')
         for num, bone in enumerate(bones):
-            fileh.write('\t{} "{}" {}\n'.format(num, bone.name, bone.parentBoneIndex))
+            fileh.write(
+                '\t{} "{}" {}\n'.format(
+                    num,
+                    bone.name,
+                    bone.parentBoneIndex))
         fileh.write('end\n')
 
     def write_skeleton(self, fileh, model: SourceMdlModel):

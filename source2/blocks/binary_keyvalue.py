@@ -24,8 +24,40 @@ class KVType(IntEnum):
 
 
 class BinaryKeyValue(Dummy):
-    ENCODING = (0x46, 0x1A, 0x79, 0x95, 0xBC, 0x95, 0x6C, 0x4F, 0xA7, 0x0B, 0x05, 0xBC, 0xA1, 0xB7, 0xDF, 0xD2)
-    FORMAT = (0x7C, 0x16, 0x12, 0x74, 0xE9, 0x06, 0x98, 0x46, 0xAF, 0xF2, 0xE6, 0x3E, 0xB5, 0x90, 0x37, 0xE7)
+    ENCODING = (
+        0x46,
+        0x1A,
+        0x79,
+        0x95,
+        0xBC,
+        0x95,
+        0x6C,
+        0x4F,
+        0xA7,
+        0x0B,
+        0x05,
+        0xBC,
+        0xA1,
+        0xB7,
+        0xDF,
+        0xD2)
+    FORMAT = (
+        0x7C,
+        0x16,
+        0x12,
+        0x74,
+        0xE9,
+        0x06,
+        0x98,
+        0x46,
+        0xAF,
+        0xF2,
+        0xE6,
+        0x3E,
+        0xB5,
+        0x90,
+        0x37,
+        0xE7)
     SIG = (0x56, 0x4B, 0x56, 0x03)
 
     def __init__(self, block_info: InfoBlock = None):
@@ -60,12 +92,14 @@ class BinaryKeyValue(Dummy):
                     data = self.buffer.read_bytes(lookup_size)
                     self.buffer.seek(entry)
                     while size > 0:
-                        self.buffer.write_bytes(data[:lookup_size if lookup_size < size else size])
+                        self.buffer.write_bytes(
+                            data[:lookup_size if lookup_size < size else size])
                         size -= lookup_size
                 else:
                     data = reader.read_int8()
                     self.buffer.write_int8(data)
-                if self.buffer.size() == (self.flags[2] << 16) + (self.flags[1] << 8) + self.flags[0]:
+                if self.buffer.size() == (
+                        self.flags[2] << 16) + (self.flags[1] << 8) + self.flags[0]:
                     working = False
                     break
         self.buffer.seek(0)
@@ -83,7 +117,9 @@ class BinaryKeyValue(Dummy):
         if not in_array:
             string_id = reader.read_uint32()
             name = "ERROR" if string_id == -1 else self.strings[string_id]
-        add = lambda v: parent.update({name: v}) if not in_array else parent.append(v)
+
+        def add(v): return parent.update(
+            {name: v}) if not in_array else parent.append(v)
         data_type = reader.read_int8()
         flag_info = KVFlag.Nothing
         if data_type & 0x80:

@@ -9,8 +9,6 @@ from .header import InfoBlock
 from ..valve_file import ValveFile
 
 
-
-
 class DXGI_FORMAT(IntEnum):
     UNKNOWN = 0,
     R32G32B32A32_TYPELESS = 1,
@@ -173,7 +171,9 @@ class VertexBuffer(Dummy):
         with reader.save_current_pos():
             reader.seek(entry + self.offset)
             assert self.total_size == self.size * self.count
-            self.buffer = ByteIO(byte_object=reader.read_bytes(self.count * self.size))
+            self.buffer = ByteIO(
+                byte_object=reader.read_bytes(
+                    self.count * self.size))
         self.read_buffer()
 
     def read_buffer(self):
@@ -182,16 +182,21 @@ class VertexBuffer(Dummy):
             vertex = SourceVertex()
             for attrib in self.attributes:
                 if attrib.name == 'POSITION':
-                    vertex.position = SourceVector(*attrib.read_from_buffer(self.buffer))
+                    vertex.position = SourceVector(
+                        *attrib.read_from_buffer(self.buffer))
                 if attrib.name == 'TEXCOORD':
-                    vertex.texCoordX, vertex.texCoordY = attrib.read_from_buffer(self.buffer)
+                    vertex.texCoordX, vertex.texCoordY = attrib.read_from_buffer(
+                        self.buffer)
                 if attrib.name == 'NORMAL':
-                    vertex.normal = SourceVector(*attrib.read_from_buffer(self.buffer))
+                    vertex.normal = SourceVector(
+                        *attrib.read_from_buffer(self.buffer))
                 if attrib.name == "BLENDINDICES":
-                    vertex.boneWeight.bone = attrib.read_from_buffer(self.buffer)
+                    vertex.boneWeight.bone = attrib.read_from_buffer(
+                        self.buffer)
                     vertex.boneWeight.boneCount = len(vertex.boneWeight.bone)
                 if attrib.name == "BLENDWEIGHT":
-                    vertex.boneWeight.weight = SourceVector4D(*attrib.read_from_buffer(self.buffer)).to_floats.as_list
+                    vertex.boneWeight.weight = SourceVector4D(
+                        *attrib.read_from_buffer(self.buffer)).to_floats.as_list
             self.vertexes.append(vertex)
             self.buffer.seek(entry + self.size)
 
@@ -204,7 +209,8 @@ class VertexAttribute(Dummy):
         self.abs_offset = 0
 
     def __repr__(self):
-        return '<VertexAttribute "{}" format:{} offset:{}>'.format(self.name, self.format.name, self.offset)
+        return '<VertexAttribute "{}" format:{} offset:{}>'.format(
+            self.name, self.format.name, self.offset)
 
     def read(self, reader: ByteIO):
         entry = reader.tell()
@@ -216,30 +222,43 @@ class VertexAttribute(Dummy):
 
     def read_from_buffer(self, reader: ByteIO):
         if self.format == DXGI_FORMAT.R32G32B32_FLOAT:
-            return [reader.read_float() for _ in range(self.format.name.count('32'))]
+            return [reader.read_float()
+                    for _ in range(self.format.name.count('32'))]
         if self.format == DXGI_FORMAT.R32G32B32_UINT:
-            return [reader.read_uint32() for _ in range(self.format.name.count('32'))]
+            return [reader.read_uint32()
+                    for _ in range(self.format.name.count('32'))]
         if self.format == DXGI_FORMAT.R32G32B32_SINT:
-            return [reader.read_int32() for _ in range(self.format.name.count('32'))]
+            return [reader.read_int32()
+                    for _ in range(self.format.name.count('32'))]
         if self.format == DXGI_FORMAT.R32G32B32A32_FLOAT:
-            return [reader.read_float() for _ in range(self.format.name.count('32'))]
+            return [reader.read_float()
+                    for _ in range(self.format.name.count('32'))]
         if self.format == DXGI_FORMAT.R32G32B32A32_UINT:
-            return [reader.read_uint32() for _ in range(self.format.name.count('32'))]
+            return [reader.read_uint32()
+                    for _ in range(self.format.name.count('32'))]
         if self.format == DXGI_FORMAT.R32G32B32A32_SINT:
-            return [reader.read_int32() for _ in range(self.format.name.count('32'))]
+            return [reader.read_int32()
+                    for _ in range(self.format.name.count('32'))]
         if self.format == DXGI_FORMAT.R16G16_FLOAT:
-            return [short_to_float(reader.read_int16()) for _ in range(self.format.name.count('16'))]
-            # return [reader.read_float16() for _ in range(self.format.name.count('16'))]
+            return [short_to_float(reader.read_int16())
+                    for _ in range(self.format.name.count('16'))]
+            # return [reader.read_float16() for _ in
+            # range(self.format.name.count('16'))]
         if self.format == DXGI_FORMAT.R16G16_SINT:
-            return [reader.read_int16() for _ in range(self.format.name.count('16'))]
+            return [reader.read_int16()
+                    for _ in range(self.format.name.count('16'))]
         if self.format == DXGI_FORMAT.R16G16_UINT:
-            return [reader.read_uint16() for _ in range(self.format.name.count('16'))]
+            return [reader.read_uint16()
+                    for _ in range(self.format.name.count('16'))]
         if self.format == DXGI_FORMAT.R8G8B8A8_SNORM:
-            return [reader.read_int8() for _ in range(self.format.name.count('8'))]
+            return [reader.read_int8()
+                    for _ in range(self.format.name.count('8'))]
         if self.format == DXGI_FORMAT.R8G8B8A8_UNORM:
-            return [reader.read_uint8() for _ in range(self.format.name.count('8'))]
+            return [reader.read_uint8()
+                    for _ in range(self.format.name.count('8'))]
         if self.format == DXGI_FORMAT.R8G8B8A8_UINT:
-            return [reader.read_uint8() for _ in range(self.format.name.count('8'))]
+            return [reader.read_uint8()
+                    for _ in range(self.format.name.count('8'))]
 
 
 class IndexBuffer(Dummy):
@@ -267,18 +286,23 @@ class IndexBuffer(Dummy):
         with reader.save_current_pos():
             reader.seek(entry + self.offset)
             assert self.total_size == self.size * self.count
-            self.buffer = ByteIO(byte_object=reader.read_bytes(self.count * self.size))
+            self.buffer = ByteIO(
+                byte_object=reader.read_bytes(
+                    self.count * self.size))
         self.read_buffer()
 
     def read_buffer(self):
         for n in range(0, self.count, 3):
-            polygon = [self.buffer.read_uint16(), self.buffer.read_uint16(), self.buffer.read_uint16()]
+            polygon = [
+                self.buffer.read_uint16(),
+                self.buffer.read_uint16(),
+                self.buffer.read_uint16()]
             self.indexes.append(polygon)
 
 
 class VBIB(Dummy):
 
-    def __init__(self, valve_file:ValveFile):
+    def __init__(self, valve_file: ValveFile):
         self.valve_file = valve_file
         self.vertex_offset = 0
         self.vertex_count = 0
@@ -289,9 +313,10 @@ class VBIB(Dummy):
         self.info_block = None
 
     def __repr__(self):
-        return '<VBIB vertex buffers:{} index buffers:{}>'.format(self.vertex_count, self.index_count)
+        return '<VBIB vertex buffers:{} index buffers:{}>'.format(
+            self.vertex_count, self.index_count)
 
-    def read(self, reader: ByteIO,block_info:InfoBlock = None):
+    def read(self, reader: ByteIO, block_info: InfoBlock = None):
         self.info_block = block_info
         entry = reader.tell()
         self.vertex_offset = reader.read_uint32()

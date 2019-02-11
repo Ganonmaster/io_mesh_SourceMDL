@@ -52,7 +52,8 @@ class IOMdl:
                     fp.seek(3)
                     print('MDL FILE WAS "PROTECTED", but screew it :P')
                 else:
-                    raise NotImplementedError('MDL format {} is not supported!'.format(temp))
+                    raise NotImplementedError(
+                        'MDL format {} is not supported!'.format(temp))
             version = struct.unpack('i', fp.read(4))[0]
 
         file_path = path.replace('.dx90', "")[:-4]
@@ -119,8 +120,10 @@ class IOMdl:
         bpy.ops.object.mode_set(mode='POSE')
         for se_bone in self.MDL.file_data.bones:  # type: mdl_data.SourceMdlBone
             bl_bone = self.armature_obj.pose.bones.get(se_bone.name)
-            pos = Vector([se_bone.position.x, se_bone.position.y, se_bone.position.z])
-            rot = Euler([se_bone.rotation.x, se_bone.rotation.y, se_bone.rotation.z])
+            pos = Vector(
+                [se_bone.position.x, se_bone.position.y, se_bone.position.z])
+            rot = Euler(
+                [se_bone.rotation.x, se_bone.rotation.y, se_bone.rotation.z])
             mat = Matrix.Translation(pos) @ rot.to_matrix().to_4x4()
             bl_bone.matrix_basis.identity()
             if bl_bone.parent:
@@ -183,10 +186,9 @@ class IOMdl:
                 rand_col.append(random.uniform(.4, 1))
             try:
                 mat.diffuse_color = rand_col
-            except:
+            except BaseException:
                 rand_col.append(1.0)
                 mat.diffuse_color = rand_col
-                
 
             mat_ind = len(md.materials) - 1
 
@@ -197,9 +199,12 @@ class IOMdl:
         vertex_indices = []
         vn_s = []
         for i in [0, 2, 1]:
-            vtx_vertex_index = strip_group.vtx_indexes[vtx_index_index + i]  # type: int
-            vtx_vertex = strip_group.vtx_vertexes[vtx_vertex_index]  # type: vtx_data.SourceVtxVertex
-            vertex_index = vtx_vertex.original_mesh_vertex_index + self.vertex_offset + mesh_vertex_offset
+            # type: int
+            vtx_vertex_index = strip_group.vtx_indexes[vtx_index_index + i]
+            # type: vtx_data.SourceVtxVertex
+            vtx_vertex = strip_group.vtx_vertexes[vtx_vertex_index]
+            vertex_index = vtx_vertex.original_mesh_vertex_index + \
+                self.vertex_offset + mesh_vertex_offset
             if vertex_index > self.VVD.file_data.lod_vertex_count[0]:
                 print('vertex index out of bounds, skipping this mesh_data')
                 return False, False
@@ -213,7 +218,8 @@ class IOMdl:
 
     def convert_mesh(self, vtx_model: vtx_data.SourceVtxModel, lod_index, model: mdl_data.SourceMdlModel,
                      material_indexes):
-        vtx_meshes = vtx_model.vtx_model_lods[lod_index].vtx_meshes  # type: List[vtx_data.SourceVtxMesh]
+        # type: List[vtx_data.SourceVtxMesh]
+        vtx_meshes = vtx_model.vtx_model_lods[lod_index].vtx_meshes
         indexes = []
         vertex_normals = []
         # small speedup
@@ -221,18 +227,23 @@ class IOMdl:
         m_ex = material_indexes.append
         vn_ex = vertex_normals.extend
 
-        for mesh_index, vtx_mesh in enumerate(vtx_meshes):  # type: int,vtx_data.SourceVtxMesh
+        for mesh_index, vtx_mesh in enumerate(
+                vtx_meshes):  # type: int,vtx_data.SourceVtxMesh
             material_index = model.meshes[mesh_index].material_index
             mesh_vertex_start = model.meshes[mesh_index].vertex_index_start
             if vtx_mesh.vtx_strip_groups:
                 for group_index, strip_group in enumerate(
                         vtx_mesh.vtx_strip_groups):  # type: vtx_data.SourceVtxStripGroup
                     if strip_group.vtx_strips and strip_group.vtx_indexes and strip_group.vtx_vertexes:
-                        field = progress_bar.ProgressBar('Converting mesh_data', len(strip_group.vtx_indexes), 20)
-                        for vtx_index in range(0, len(strip_group.vtx_indexes), 3):
+                        field = progress_bar.ProgressBar(
+                            'Converting mesh_data', len(
+                                strip_group.vtx_indexes), 20)
+                        for vtx_index in range(
+                                0, len(strip_group.vtx_indexes), 3):
                             if not vtx_index % 3 * 10:
                                 field.increment(3)
-                            f, vn = self.get_polygon(strip_group, vtx_index, lod_index, mesh_vertex_start)
+                            f, vn = self.get_polygon(
+                                strip_group, vtx_index, lod_index, mesh_vertex_start)
                             if not f and not vn:
                                 break
                             i_ex(f)
@@ -249,14 +260,16 @@ class IOMdl:
 
     @staticmethod
     def convert_vertex(vertex: source_structs.SourceVertex):
-        return vertex.position.as_list, (vertex.texCoordX, 1 - vertex.texCoordY)
+        return vertex.position.as_list, (vertex.texCoordX,
+                                         1 - vertex.texCoordY)
 
     @staticmethod
     def convert_vertex2(vertex: source_structs.SourceVertex):
         return vertex.position.as_list, (
             vertex.texCoordX, 1 - vertex.texCoordY), vertex.normal.as_list, vertex.boneWeight
 
-    def create_model2(self, model: mdl_data.SourceMdlModel, vtx_model: vtx_data.SourceVtxModel):
+    def create_model2(self, model: mdl_data.SourceMdlModel,
+                      vtx_model: vtx_data.SourceVtxModel):
         name = model.name.replace('.smd', '').replace('.dmx', '')
         if '/' in name or '\\' in name:
             name = os.path.basename(name)
@@ -267,12 +280,16 @@ class IOMdl:
         self.mesh_obj.parent = self.armature_obj
         bpy.context.scene.objects.link(self.mesh_obj)
 
-        modifier = self.mesh_obj.modifiers.new(type="ARMATURE", name="Armature")
+        modifier = self.mesh_obj.modifiers.new(
+            type="ARMATURE", name="Armature")
         modifier.object = self.armature_obj
 
         self.mesh_data = self.mesh_obj.data
-        [self.get_material(mat.path_file_name, self.mesh_obj) for mat in self.MDL.file_data.textures]
-        weight_groups = {bone.name: self.mesh_obj.vertex_groups.new(bone.name) for bone in self.MDL.file_data.bones}
+        [self.get_material(mat.path_file_name, self.mesh_obj)
+         for mat in self.MDL.file_data.textures]
+        weight_groups = {
+            bone.name: self.mesh_obj.vertex_groups.new(
+                bone.name) for bone in self.MDL.file_data.bones}
 
         vtx_model_lod = vtx_model.vtx_model_lods[0]
         vvd_verts = self.VVD.file_data.vertexes
@@ -291,19 +308,22 @@ class IOMdl:
                 # vtx_vertexes.extend(strip_group.vtx_vertexes)
                 # vertexes.extend(vvd_verts[vertex_offset:vertex_offset + strip_group.vertex_count])
 
-                for i, vertex_id in enumerate(strip_group.vtx_indexes):  # type: int
+                for i, vertex_id in enumerate(
+                        strip_group.vtx_indexes):  # type: int
                     vertex = strip_group.vtx_vertexes[vertex_id]
                     vertex_global_ids.append(
                         vertex.original_mesh_vertex_index + self.vertex_offset + mdl_mesh.vertex_index_start)
                     # indices.append(vertex_id)
                     vtx_vertexes.append(vertex)
                     # field.increment(1000)
-                indices.extend(list(map(lambda a: a[::-1], split(strip_group.vtx_indexes, 3))))
+                indices.extend(
+                    list(map(lambda a: a[::-1], split(strip_group.vtx_indexes, 3))))
 
                 # self.index_offset+=strip_group.index_count
 
         self.vertex_offset += model.vertex_count
-        field = progress_bar.ProgressBar('Converting mesh_data', len(vertex_global_ids), 20)
+        field = progress_bar.ProgressBar(
+            'Converting mesh_data', len(vertex_global_ids), 20)
         for i, vertex_id in enumerate(set(vertex_global_ids)):
             v, uv, n, w = self.convert_vertex2(
                 vvd_verts[vertex_id])
@@ -326,10 +346,12 @@ class IOMdl:
         #     u = uvs[self.mesh_data.loops[i].vertex_index]
         #     uv_data[i].uv = u
         for n, vertex_weight in enumerate(weights):
-            for bone_index, weight in zip(vertex_weight.bone, vertex_weight.weight):
+            for bone_index, weight in zip(
+                    vertex_weight.bone, vertex_weight.weight):
                 if weight == 0.0:
                     continue
-                weight_groups[self.MDL.file_data.bones[bone_index].name].add([n], weight, 'REPLACE')
+                weight_groups[self.MDL.file_data.bones[bone_index].name].add(
+                    [n], weight, 'REPLACE')
 
     def remap_materials(self, used_materials, all_materials):
         remap = {}
@@ -338,7 +360,8 @@ class IOMdl:
 
         return remap
 
-    def create_model(self, model: mdl_data.SourceMdlModel, vtx_model: vtx_data.SourceVtxModel):
+    def create_model(self, model: mdl_data.SourceMdlModel,
+                     vtx_model: vtx_data.SourceVtxModel):
         name = model.name.replace('.smd', '').replace('.dmx', '')
         if '/' in name or '\\' in name:
             name = os.path.basename(name)
@@ -352,23 +375,31 @@ class IOMdl:
         self.collection.objects.link(self.mesh_obj)
         # bpy.context.scene.objects.link(self.mesh_obj)
 
-        modifier = self.mesh_obj.modifiers.new(type="ARMATURE", name="Armature")
+        modifier = self.mesh_obj.modifiers.new(
+            type="ARMATURE", name="Armature")
         modifier.object = self.armature_obj
 
         self.mesh_data = self.mesh_obj.data
 
         # [self.get_material(mat.path_file_name, self.mesh_obj) for mat in self.MDL.file_data.textures]
-        used_materials = {m_id: False for m_id in range(len(self.MDL.file_data.textures))}
+        used_materials = {m_id: False for m_id in range(
+            len(self.MDL.file_data.textures))}
         material_indexes = []
-        weight_groups = {bone.name: self.mesh_obj.vertex_groups.new(name = bone.name) for bone in
+        weight_groups = {bone.name: self.mesh_obj.vertex_groups.new(name=bone.name) for bone in
                          self.MDL.file_data.bones}
-        vtx_model_lod = vtx_model.vtx_model_lods[0]  # type: vtx_data.SourceVtxModelLod
+        # type: vtx_data.SourceVtxModelLod
+        vtx_model_lod = vtx_model.vtx_model_lods[0]
         print('Converting {} mesh_data'.format(name))
         if vtx_model_lod.meshCount > 0:
             t = time.time()
             polygons, polygon_material_indexes, normals = self.convert_mesh(vtx_model, 0, model,
                                                                             material_indexes)
-            print('Mesh convertation took {} sec'.format(round(time.time() - t), 3))
+            print(
+                'Mesh convertation took {} sec'.format(
+                    round(
+                        time.time() -
+                        t),
+                    3))
         else:
             return
         self.vertex_offset += model.vertex_count
@@ -378,7 +409,8 @@ class IOMdl:
             used_materials[mat_index] = True
 
         mat_remap = self.remap_materials(
-            [self.MDL.file_data.textures[mat_id] for mat_id, used in used_materials.items() if used],
+            [self.MDL.file_data.textures[mat_id]
+                for mat_id, used in used_materials.items() if used],
             self.MDL.file_data.textures)
         for old_mat_id, new_mat_id in mat_remap.items():
             mat_name = self.MDL.file_data.textures[old_mat_id].path_file_name
@@ -395,10 +427,12 @@ class IOMdl:
             # print('Adding flexes')
             self.add_flexes(model)
         for n, vertex in enumerate(self.VVD.file_data.vertexes):
-            for bone_index, weight in zip(vertex.boneWeight.bone, vertex.boneWeight.weight):
+            for bone_index, weight in zip(
+                    vertex.boneWeight.bone, vertex.boneWeight.weight):
                 if weight == 0.0:
                     continue
-                weight_groups[self.MDL.file_data.bones[bone_index].name].add([n], weight, 'REPLACE')
+                weight_groups[self.MDL.file_data.bones[bone_index].name].add(
+                    [n], weight, 'REPLACE')
         # self.mesh_data.uv_textures.new()
         self.mesh_data.uv_layers.new()
         uv_data = self.mesh_data.uv_layers[0].data
@@ -406,7 +440,8 @@ class IOMdl:
         for i in range(len(uv_data)):
             u = uvs[self.mesh_data.loops[i].vertex_index]
             uv_data[i].uv = u
-        for polygon, mat_index in zip(self.mesh_data.polygons, polygon_material_indexes):
+        for polygon, mat_index in zip(
+                self.mesh_data.polygons, polygon_material_indexes):
             polygon.material_index = mat_remap[mat_index]
 
         bpy.ops.object.select_all(action="DESELECT")
@@ -469,8 +504,10 @@ class IOMdl:
         # Going through all flex frames in SourceMdlModel
         for flex_frame in mdlmodel.flex_frames:
 
-            # Now for every flex and vertex_offset(bodyAndMeshVertexIndexStarts)
-            for flex, vertex_offset in zip(flex_frame.flexes, flex_frame.vertex_offsets):
+            # Now for every flex and
+            # vertex_offset(bodyAndMeshVertexIndexStarts)
+            for flex, vertex_offset in zip(
+                    flex_frame.flexes, flex_frame.vertex_offsets):
 
                 flex_desc = self.MDL.file_data.flex_descs[flex.flex_desc_index]
                 flex_name = flex_desc.name
@@ -491,12 +528,14 @@ class IOMdl:
 
     def create_attachments(self):
         for attachment in self.MDL.file_data.attachments:
-            bone = self.armature.bones.get(self.MDL.file_data.bones[attachment.localBoneIndex].name)
+            bone = self.armature.bones.get(
+                self.MDL.file_data.bones[attachment.localBoneIndex].name)
 
             empty = bpy.data.objects.new("empty", None)
-            #bpy.context.scene.objects.link(empty)
+            # bpy.context.scene.objects.link(empty)
             empty.name = attachment.name
-            pos = Vector([attachment.pos.x, attachment.pos.y, attachment.pos.z])
+            pos = Vector(
+                [attachment.pos.x, attachment.pos.y, attachment.pos.z])
             rot = Euler([attachment.rot.x, attachment.rot.y, attachment.rot.z])
             empty.matrix_basis.identity()
             empty.parent = self.armature_obj
@@ -510,7 +549,8 @@ class IOMdl:
         self.collection.objects.link(empty)
         empty.name = 'illum position'
         empty.parent = self.armature_obj
-        empty.location = Vector(self.MDL.file_data.illumination_position.as_list)
+        empty.location = Vector(
+            self.MDL.file_data.illumination_position.as_list)
         empty.empty_display_type = 'SPHERE'
 
     def _get_proj_root(self, path: Path):
@@ -534,6 +574,9 @@ class IOMdl:
             for tex_path in self.MDL.file_data.texture_paths:
                 if tex_path and (tex_path[0] == '/' or tex_path[0] == '\\'):
                     tex_path = tex_path[1:]
-                mat = gi.find_material(tex_path + texture.path_file_name, use_recursive=True)
+                mat = gi.find_material(
+                    tex_path + texture.path_file_name,
+                    use_recursive=True)
                 if mat:
-                    materials.append((Path(mat), Path(mat).relative_to(game_info_path)))
+                    materials.append(
+                        (Path(mat), Path(mat).relative_to(game_info_path)))
