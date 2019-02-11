@@ -1,6 +1,6 @@
 from typing import List
 
-from byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from .dummy import Dummy
 from .header import InfoBlock
 from ..valve_file import ValveFile
@@ -13,6 +13,7 @@ class RERL(Dummy):
         self.resource_count = 0
         self.resources = []  # type: List[RERLResource]
         self.info_block = None
+
     def __repr__(self):
         return '<External resources list count:{}>'.format(self.resource_count)
 

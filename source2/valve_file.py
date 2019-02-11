@@ -3,11 +3,11 @@ import sys
 from pprint import pprint
 from typing import List, TextIO
 
-from ByteIO import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 import os.path
 
-from Source2.Blocks.Common import SourceVector
-from Source2.Blocks.Header import CompiledHeader, InfoBlock
+from .blocks.common import SourceVector
+from .blocks.header import CompiledHeader, InfoBlock
 
 
 
@@ -15,11 +15,11 @@ class ValveFile:
 
     def __init__(self, filepath):
 
-        from Source2.Blocks.NTRO import NTRO
-        from Source2.Blocks.REDI import REDI
-        from Source2.Blocks.RERP import RERL
-        from Source2.Blocks.VBIB import VBIB
-        from Source2.Blocks.DATA import DATA
+        from .blocks.ntro import NTRO
+        from .blocks.redi import REDI
+        from .blocks.rerp import RERL
+        from .blocks.vbib import VBIB
+        from .blocks.data import DATA
 
         print('Reading {}'.format(filepath))
         self.reader = ByteIO(path=filepath, copy_data_from_handle=False, )

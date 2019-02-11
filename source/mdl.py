@@ -1,6 +1,5 @@
 import os.path
-from .mdl_data import *
-from io_mesh_SourceMDL.byte_io import *
+from ValveFileSystem.byte_io import *
 from .mdl_data_animations import *
 from io_mesh_SourceMDL.progress_bar import ProgressBar
 

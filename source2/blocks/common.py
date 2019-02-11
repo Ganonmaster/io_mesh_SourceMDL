@@ -2,7 +2,7 @@ import importlib
 import math
 from enum import IntEnum
 
-from byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from .dummy import Dummy
 
 

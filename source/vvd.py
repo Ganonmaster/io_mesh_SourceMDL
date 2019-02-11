@@ -1,6 +1,5 @@
-import sys
 import os
-from io_mesh_SourceMDL.byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from .vvd_data import SourceVvdFileData
 from io_mesh_SourceMDL.utils import case_insensitive_file_resolution
 

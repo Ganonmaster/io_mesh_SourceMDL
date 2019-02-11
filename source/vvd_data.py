@@ -1,5 +1,5 @@
 from typing import List
-from io_mesh_SourceMDL.byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from io_mesh_SourceMDL.source_structs import SourceVertex
 
 

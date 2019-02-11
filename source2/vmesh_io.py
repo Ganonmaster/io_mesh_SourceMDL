@@ -1,7 +1,6 @@
 import sys
 
 sys.path.append(r'E:\PYTHON\io_mesh_SourceMDL')
-from .valve_file import ValveFile
 from .blocks.vbib import *
 import os.path
 import bpy

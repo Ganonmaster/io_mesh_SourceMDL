@@ -1,13 +1,10 @@
-from enum import Enum
 from pprint import pprint
-from typing import List
 
 import struct
 
 import math
 
-from io_mesh_SourceMDL.byte_io import ByteIO
-from io_mesh_SourceMDL.source_structs import SourceFloat16bits, SourceVector
+from ValveFileSystem.byte_io import ByteIO
 from .mdl_data import *
 
 class SourceMdlAnimationValuePointer:

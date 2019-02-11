@@ -1,7 +1,7 @@
 import math
 import random
 import struct
-from .byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 
 
 class SourceVector:

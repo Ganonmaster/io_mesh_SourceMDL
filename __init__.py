@@ -1,5 +1,11 @@
+import sys
 import bpy
 from pathlib import Path
+from bpy.props import StringProperty, BoolProperty, CollectionProperty
+
+# Add shared library to the path
+sys.path.append(".ValveFileSystem")
+
 
 bl_info = {
     "name": "Source Engine model_path import + textures (.mdl, .file_data, .vtx)",
@@ -12,9 +18,8 @@ bl_info = {
     # "wiki_url": "http://www.barneyparker.com/blender-json-import-export-plugin",
     # "tracker_url": "http://www.barneyparker.com/blender-json-import-export-plugin",
     "category": "Import-Export"
-}
 
-from bpy.props import StringProperty, BoolProperty, CollectionProperty
+}
 
 
 class MDLImporter_OT_operator(bpy.types.Operator):
@@ -37,7 +42,7 @@ class MDLImporter_OT_operator(bpy.types.Operator):
 
     def execute(self, context):
         try:
-            from io_texture_VTF import VMT
+            from io_texture_VTF import vmt
             vtf_plugin_found = True
         except ImportError:
             print('Could not load VTF plugin')

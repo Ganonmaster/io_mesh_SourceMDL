@@ -2,8 +2,8 @@ import os.path
 import sys
 
 sys.path.append(r'E:\PYTHON\io_mesh_SourceMDL')
-from Source2.ValveFile import ValveFile
-from Source2.Vmesh_IO import VMESH_IO
+from .valve_file import ValveFile
+from .vmesh_io import VMESH_IO
 import bpy, mathutils
 from mathutils import Vector, Matrix, Euler, Quaternion
 

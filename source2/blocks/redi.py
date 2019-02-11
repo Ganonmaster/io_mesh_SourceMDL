@@ -4,6 +4,7 @@ from .dummy import Dummy
 from .header import InfoBlock
 from .redi_data import *
 from ..valve_file import ValveFile
+from ValveFileSystem.byte_io import ByteIO
 
 redi_blocks = [InputDependencies,
                AdditionalInputDependencies,

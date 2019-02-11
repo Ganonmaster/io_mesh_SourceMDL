@@ -6,7 +6,7 @@ from pprint import pformat
 from typing import List, Tuple
 
 import io_mesh_SourceMDL.utils
-from io_mesh_SourceMDL.byte_io import ByteIO, OffsetOutOfBounds
+from ValveFileSystem.byte_io import ByteIO, OffsetOutOfBounds
 from io_mesh_SourceMDL.source_structs import SourceVector, SourceQuaternion, SourceFloat16bits
 from io_mesh_SourceMDL.source import vtx, vvd
 from io_mesh_SourceMDL.flags import Flags

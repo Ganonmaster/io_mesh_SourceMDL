@@ -8,8 +8,8 @@ setConsoleModeProc = k32.SetConsoleMode
 setConsoleModeProc(k32.GetStdHandle(-11), 0x0001 | 0x0002 | 0x0004)
 
 from io_mesh_SourceMDL.source import mdl
-from .ValveFileSystem import blender
-from .ValveFileSystem.valve import GameInfoFile, KeyValueFile
+from ValveFileSystem import blender
+from ValveFileSystem.valve import GameInfoFile, KeyValueFile
 
 if __name__ == '__main__':
     # model = Path(

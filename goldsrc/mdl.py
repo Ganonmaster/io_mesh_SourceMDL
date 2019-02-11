@@ -1,6 +1,6 @@
 import os
 
-from ..byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from ..progress_bar import ProgressBar
 from .mdl_data import SourceMdlFileDataV10, SourceMdlBone, SourceMdlBoneController
 

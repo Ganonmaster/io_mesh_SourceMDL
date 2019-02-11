@@ -2,7 +2,7 @@ import math
 from enum import IntEnum
 from typing import List
 
-from byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from .common import SourceVertex, SourceVector, short_to_float, SourceVector4D
 from .dummy import Dummy
 from .header import InfoBlock

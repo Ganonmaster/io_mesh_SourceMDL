@@ -1,7 +1,7 @@
 import struct
 from typing import List
 from io_mesh_SourceMDL.flags import Flags
-from io_mesh_SourceMDL.byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 
 max_bones_per_vertex = 3
 extra_8 = True

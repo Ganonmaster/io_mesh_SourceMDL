@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from byte_io import ByteIO
+from ValveFileSystem.byte_io import ByteIO
 from .dummy import Dummy
 from .header import InfoBlock
 

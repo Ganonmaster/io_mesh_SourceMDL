@@ -6,12 +6,12 @@ import time
 from pathlib import Path
 from contextlib import redirect_stdout
 from typing import List
-from .ValveFileSystem import blender
+from ValveFileSystem import blender
+from ValveFileSystem import valve
 
 from . import source_structs, progress_bar
 from io_mesh_SourceMDL.source import mdl_data, mdl, vtx_data, vtx, vvd
 
-from io_texture_VTF import ValveUtils as ValveUtilsVTF
 
 # Blender imports
 try:
@@ -525,10 +525,10 @@ class IOMdl:
         mod_path = blender.get_mod_path(path)
         game_info_path = mod_path / 'gameinfo.txt'
         if game_info_path.exists():
-            gi = ValveUtilsVTF.GameInfoFile(game_info_path)
+            gi = valve.GameInfoFile(game_info_path)
         else:
             game_info_path = self._get_proj_root(path)
-            gi = ValveUtilsVTF.MaterialPathResolver(game_info_path)
+            gi = valve.MaterialPathResolver(game_info_path)
 
         for texture in self.MDL.file_data.textures:
             for tex_path in self.MDL.file_data.texture_paths:
