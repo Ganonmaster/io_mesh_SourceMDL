@@ -32,12 +32,28 @@ class MDLImporter_OT_operator(bpy.types.Operator):
     write_qc = BoolProperty(name="Write QC file", default=False, subtype='UNSIGNED')
     filter_glob = StringProperty(default="*.mdl", options={'HIDDEN'})
 
+    # Check for VTF plugin - if found, give the option to import textures
+    import_textures = BoolProperty(name="Import materials and textures", default=False, subtype='UNSIGNED')
+
     def execute(self, context):
+        try:
+            from io_texture_VTF import VMT
+            vtf_plugin_found = True
+        except ImportError:
+            print('Could not load VTF plugin')
+            vtf_plugin_found = False
+            pass
+
+        if self.import_textures and not vtf_plugin_found:
+            raise NotImplemented("VTF Plugin could not be found")
+
         from . import io_Mdl
         directory = Path(self.filepath).parent.absolute()
         for file in self.files:
             importer = io_Mdl.IOMdl(str(directory / file.name),
-                                    join_bones=self.normal_bones, join_clamped=self.join_clamped)
+                                    join_bones=self.normal_bones,
+                                    join_clamped=self.join_clamped,
+                                    import_textures=self.import_textures)
             if self.write_qc:
                 from . import QC
                 qc = QC.QC(importer.MDL)

@@ -3,11 +3,12 @@ import os.path
 import random
 import struct
 import time
+from pathlib import Path
 from contextlib import redirect_stdout
 from typing import List
 
 try:
-    from . import VVD, VVD_DATA, VTX, MDL, MDL_DATA, VTX_DATA, GLOBALS, progressBar
+    from . import VVD, VVD_DATA, VTX, MDL, MDL_DATA, VTX_DATA, GLOBALS, progressBar, Utils, ValveUtils
     from . import math_utilities
 except ImportError:
     import sys
@@ -22,6 +23,10 @@ except ImportError:
     import GLOBALS
     import progressBar
     import math_utilities
+    import Utils
+    import ValveUtils
+
+from io_texture_VTF import ValveUtils as ValveUtilsVTF
 
 # Blender imports
 try:
@@ -97,6 +102,9 @@ class IOMdl:
         self.create_models()
         self.create_attachments()
         bpy.ops.object.mode_set(mode='OBJECT')
+
+        if True:
+            self.import_materials(path)
 
     def create_skeleton(self, normal_bones=False):
 
@@ -519,6 +527,31 @@ class IOMdl:
         empty.parent = self.armature_obj
         empty.location = Vector(self.MDL.file_data.illumination_position.as_list)
         empty.empty_display_type = 'SPHERE'
+
+    def _get_proj_root(self, path: Path):
+        if path.parts[-1] == 'models':
+            return path.parent
+        else:
+            return self._get_proj_root(path.parent)
+
+    def import_materials(self, path):
+        materials = []
+        path = Path(path)
+        mod_path = ValveUtils.get_mod_path(path)
+        game_info_path = mod_path / 'gameinfo.txt'
+        if game_info_path.exists():
+            gi = ValveUtilsVTF.GameInfoFile(game_info_path)
+        else:
+            game_info_path = self._get_proj_root(path)
+            gi = ValveUtilsVTF.MaterialPathResolver(game_info_path)
+
+        for texture in self.MDL.file_data.textures:
+            for tex_path in self.MDL.file_data.texture_paths:
+                if tex_path and (tex_path[0] == '/' or tex_path[0] == '\\'):
+                    tex_path = tex_path[1:]
+                mat = gi.find_material(tex_path + texture.path_file_name, use_recursive=True)
+                if mat:
+                    materials.append((Path(mat), Path(mat).relative_to(game_info_path)))
 
 
 if __name__ == '__main__':
