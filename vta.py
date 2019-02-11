@@ -1,18 +1,11 @@
 import os.path
 from typing import List
 
-try:
-    from MDL import SourceMdlFile49, SourceVector
-    from MDL_DATA import SourceMdlBone, SourceMdlFlexDesc, SourceMdlFlex, SourceMdlVertAnim, SourceMdlMesh, \
-        SourceMdlBodyPart, SourceMdlModel, FlexFrame
-    from VVD import SourceVvdFile49
-    from VVD_DATA import SourceVertex
-except:
-    from .MDL import SourceMdlFile49, SourceVector
-    from .MDL_DATA import SourceMdlBone, SourceMdlFlexDesc, SourceMdlFlex, SourceMdlVertAnim, SourceMdlMesh, \
-        SourceMdlBodyPart, SourceMdlModel, FlexFrame
-    from .VVD import SourceVvdFile49
-    from .VVD_DATA import SourceVertex
+from .mdl import SourceMdlFile49, SourceVector
+from .mdl_data import SourceMdlBone, SourceMdlFlexDesc, SourceMdlFlex, SourceMdlVertAnim, SourceMdlMesh, \
+    SourceMdlBodyPart, SourceMdlModel, FlexFrame
+from .vvd import SourceVvdFile49
+from .vvd_data import SourceVertex
 
 
 class VTA:
@@ -76,11 +69,3 @@ class VTA:
 
     def write_end(self, fileh):
         fileh.close()
-
-
-if __name__ == '__main__':
-    mdl = SourceMdlFile49(r'.\test_data\nick_hwm')
-    vvd = SourceVvdFile49(r'.\test_data\nick_hwm')
-
-    A = VTA(mdl, vvd)
-    # A.write_vta()

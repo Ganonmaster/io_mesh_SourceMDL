@@ -1,15 +1,8 @@
 import os.path
-
-try:
-    from .MDL_DATA import *
-    from .ByteIO import *
-    from .MDL_DATA_ANIMATIONS import *
-    from .progressBar import Progress_bar
-except Exception:
-    from MDL_DATA import *
-    from ByteIO import *
-    from MDL_DATA_ANIMATIONS import *
-    from progressBar import Progress_bar
+from .mdl_data import *
+from .byte_io import *
+from .mdl_data_animations import *
+from .progress_bar import ProgressBar
 
 
 class SourceMdlFile49:
@@ -42,7 +35,7 @@ class SourceMdlFile49:
 
     def read_bones(self):
         if self.file_data.bone_count > 0:
-            pb = Progress_bar(desc='Reading bones', max_=self.file_data.bone_count, len_=20)
+            pb = ProgressBar(desc='Reading bones', max_=self.file_data.bone_count, len_=20)
             self.reader.seek(self.file_data.bone_offset, 0)
             for i in range(self.file_data.bone_count):
                 pb.draw()
@@ -52,7 +45,7 @@ class SourceMdlFile49:
 
     def read_bone_controllers(self):
         if self.file_data.bone_controller_count > 0:
-            pb = Progress_bar(desc='Reading Bone Controllers', max_=self.file_data.bone_controller_count, len_=20)
+            pb = ProgressBar(desc='Reading Bone Controllers', max_=self.file_data.bone_controller_count, len_=20)
             for _ in range(self.file_data.bone_controller_count):
                 pb.draw()
                 SourceMdlBoneController().read(self.reader, self.file_data)
@@ -70,7 +63,7 @@ class SourceMdlFile49:
     def read_flex_descs(self):
         if self.file_data.flex_desc_count > 0:
             self.reader.seek(self.file_data.flex_desc_offset, 0)
-            pb = Progress_bar(desc='Reading flex descriptions', max_=self.file_data.flex_desc_count, len_=20)
+            pb = ProgressBar(desc='Reading flex descriptions', max_=self.file_data.flex_desc_count, len_=20)
             for _ in range(self.file_data.flex_desc_count):
                 pb.draw()
                 flex_desc = SourceMdlFlexDesc()
@@ -81,7 +74,7 @@ class SourceMdlFile49:
     def read_flex_controllers(self):
         if self.file_data.flex_controller_count > 0:
             self.reader.seek(self.file_data.flex_controller_offset, 0)
-            pb = Progress_bar(desc='Reading flex Controllers', max_=self.file_data.flex_controller_count, len_=20)
+            pb = ProgressBar(desc='Reading flex Controllers', max_=self.file_data.flex_controller_count, len_=20)
             for i in range(self.file_data.flex_controller_count):
                 pb.draw()
                 SourceMdlFlexController().read(self.reader, self.file_data)
@@ -89,7 +82,7 @@ class SourceMdlFile49:
 
     def read_flex_rules(self):
         self.reader.seek(self.file_data.flex_rule_offset, 0)
-        pb = Progress_bar(desc='Reading flex rules', max_=self.file_data.flex_rule_count, len_=20)
+        pb = ProgressBar(desc='Reading flex rules', max_=self.file_data.flex_rule_count, len_=20)
         for i in range(self.file_data.flex_rule_count):
             pb.draw()
             SourceMdlFlexRule().read(self.reader, self.file_data)
@@ -98,7 +91,7 @@ class SourceMdlFile49:
     def read_attachments(self):
         if self.file_data.local_attachment_count > 0:
             self.reader.seek(self.file_data.local_attachment_offset, 0)
-            pb = Progress_bar(desc='Reading attachments', max_=self.file_data.local_attachment_count, len_=20)
+            pb = ProgressBar(desc='Reading attachments', max_=self.file_data.local_attachment_count, len_=20)
             for _ in range(self.file_data.local_attachment_count):
                 pb.draw()
                 SourceMdlAttachment().read(self.reader, self.file_data)
@@ -115,7 +108,7 @@ class SourceMdlFile49:
     def read_body_parts(self):
         if self.file_data.body_part_count > 0:
             self.reader.seek(self.file_data.body_part_offset)
-            pb = Progress_bar(desc='Reading body parts', max_=self.file_data.body_part_count, len_=20)
+            pb = ProgressBar(desc='Reading body parts', max_=self.file_data.body_part_count, len_=20)
             for _ in range(self.file_data.body_part_count):
                 pb.draw()
                 SourceMdlBodyPart().read(self.reader, self.file_data)
@@ -151,7 +144,7 @@ class SourceMdlFile49:
     def read_sequences(self):
         with self.reader.save_current_pos():
             self.reader.seek(self.file_data.local_sequence_offset)
-            pb = Progress_bar(desc='Reading sequences', max_=self.file_data.local_sequence_count, len_=20)
+            pb = ProgressBar(desc='Reading sequences', max_=self.file_data.local_sequence_count, len_=20)
             for _ in range(self.file_data.local_sequence_count):
                 self.file_data.sequence_descs.append(SourceMdlSequenceDesc().read(self.reader, self.file_data))
                 pb.increment(1)
@@ -391,33 +384,3 @@ class SourceMdlFile53(SourceMdlFile49):
         with open(r'.\test_data\nick_hwm','wb') as fp:
             writer = ByteIO(file=fp)
             self.file_data.write(writer)
-
-
-if __name__ == '__main__':
-    # with open('log.log', "w",encoding='utf8') as f:  # replace filepath & filename
-    #     with f as sys.stdout:
-    # model_path = r'G:\SteamLibrary\steamapps\common\SourceFilmmaker\game\usermod\models\Red_eye\SmashingRenders\Byun_slug'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\tf_movies\models\player\hwm\medic'
-    # model_path = r'.\test_data\bonnie'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\tyranno\raptor'
-    model_path = r"C:\Users\RED_EYE\Downloads\kateryne"
-    # model_path = r'.\test_data\nick_hwm'
-    # model_path = r'.\test_data\reimu_v2'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\bge\narry\zach_water_v3'
-    # model_path = r'.\test_data\l_pistol_noenv'
-    # model_path = r'.\test_data\hl\combine_strider'
-    # model_path = r'.\test_data\hard_suit'
-    # model_path = r'H:\games\Titanfall 2\extr\models\weapons\titan_sniper_rifle\w_titan_sniper_rifle'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\workshop\models\player\asrielflex'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\workshop\models\doom\demons\imp'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\tf\models\player\heavy'
-    # model_path = r'./test_data/portal2/player'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\rick-and-morty\pink_raptor'
-    # model_path = r'.\test_data\test_case-2models-with-flexes'
-    # a = SourceMdlFile53(model_path)
-    a = SourceMdlFile49(model_path)
-    a.test()
-    # a.file_data.print_info()
-    # mdl2 = SourceMdlFile53(model_path)
-    # mdl2.test()
-    # print(a.mdl)

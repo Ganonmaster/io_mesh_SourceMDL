@@ -1,19 +1,10 @@
-import sys
 import os
-from pprint import pprint
+from .vtx_data import *
+from .utils import case_insensitive_file_resolution
+
 
 def split(array, n=3):
     return [array[i:i + n] for i in range(0, len(array), n)]
-
-
-try:
-    from .ByteIO import ByteIO
-    from .VTX_DATA import *
-    from .Utils import case_insensitive_file_resolution
-except Exception:
-    from ByteIO import ByteIO
-    from VTX_DATA import *
-    from Utils import case_insensitive_file_resolution
 
 
 class SourceVtxFile49:
@@ -72,20 +63,3 @@ class SourceVtxFile49:
         print('total_verts', v_acc)
         print('total_inds', i_acc)
         print('total_topology', t_acc)
-
-
-if __name__ == '__main__':
-    with open('log.log', "w") as f:  # replace filepath & filename
-        with f as sys.stdout:
-            # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\tyranno\raptor_subD'
-            model_path = r'./test_data\subd'
-            # model_path = r'.\test_data\l_pistol_noenv'
-            # model_path = r'test_data\geavy'
-            # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\tf\models\player\heavy'
-            # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\rick-and-morty\pink_raptor'
-            # MDL_edit('E:\\MDL_reader\\sexy_bonniev2')
-            a = SourceVtxFile49(model_path)
-            # a = SourceVtxFile49(r'test_data\kali')
-            # a = SourceVtxFile49(r'test_data\kali')
-
-            a.test()

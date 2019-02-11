@@ -2,11 +2,11 @@ import math
 from enum import IntEnum
 from typing import List
 
-from ByteIO import ByteIO
-from Source2.Blocks.Common import SourceVertex, SourceVector, short_to_float, SourceVector4D
-from Source2.Blocks.Dummy import Dummy
-from Source2.Blocks.Header import InfoBlock
-from Source2.ValveFile import ValveFile
+from byte_io import ByteIO
+from .common import SourceVertex, SourceVector, short_to_float, SourceVector4D
+from .dummy import Dummy
+from .header import InfoBlock
+from ..valve_file import ValveFile
 
 
 

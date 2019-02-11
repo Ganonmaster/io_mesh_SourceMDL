@@ -6,25 +6,10 @@ import time
 from pathlib import Path
 from contextlib import redirect_stdout
 from typing import List
+from .ValveFileSystem import blender
 
-try:
-    from . import VVD, VVD_DATA, VTX, MDL, MDL_DATA, VTX_DATA, GLOBALS, progressBar, Utils, ValveUtils
-    from . import math_utilities
-except ImportError:
-    import sys
-
-    sys.path.append(r'E:\PYTHON\MDL_reader\rewrite')
-    import VVD
-    import VVD_DATA
-    import VTX
-    import MDL
-    import MDL_DATA
-    import VTX_DATA
-    import GLOBALS
-    import progressBar
-    import math_utilities
-    import Utils
-    import ValveUtils
+from . import vvd, vvd_data, vtx, mdl, mdl_data, vtx_data, valve_structs, progress_bar, utils
+from . import math_utilities
 
 from io_texture_VTF import ValveUtils as ValveUtilsVTF
 
@@ -71,20 +56,20 @@ class IOMdl:
             version = struct.unpack('i', fp.read(4))[0]
 
         file_path = path.replace('.dx90', "")[:-4]
-        self.MDL = None  # type: MDL.SourceMdlFile49
-        self.VVD = None  # type: VVD.SourceVvdFile49
-        self.VTX = None  # type: VTX.SourceVtxFile49
+        self.MDL = None  # type: mdl.SourceMdlFile49
+        self.VVD = None  # type: vvd.SourceVvdFile49
+        self.VTX = None  # type: vtx.SourceVtxFile49
         if version == 53:
             print('Found Titanfall2 model_path')
-            self.MDL = MDL.SourceMdlFile53(path=file_path)
+            self.MDL = mdl.SourceMdlFile53(path=file_path)
             self.VVD = self.MDL.VVD
             self.VTX = self.MDL.VTX
 
         elif version < 53:
             if path:
-                self.VVD = VVD.SourceVvdFile49(file_path)
-                self.VTX = VTX.SourceVtxFile49(file_path)
-                self.MDL = MDL.SourceMdlFile49(file_path)
+                self.VVD = vvd.SourceVvdFile49(file_path)
+                self.VTX = vtx.SourceVtxFile49(file_path)
+                self.MDL = mdl.SourceMdlFile49(file_path)
 
         else:
             raise NotImplementedError('WTF? HOW THIS HAPPENED')
@@ -120,10 +105,10 @@ class IOMdl:
 
         bpy.ops.object.mode_set(mode='EDIT')
         bones = []
-        for se_bone in self.MDL.file_data.bones:  # type: MDL_DATA.SourceMdlBone
+        for se_bone in self.MDL.file_data.bones:  # type: mdl_data.SourceMdlBone
             bones.append((self.armature.edit_bones.new(se_bone.name), se_bone))
 
-        for bl_bone, se_bone in bones:  # type: bpy.types.EditBone, MDL_DATA.SourceMdlBone
+        for bl_bone, se_bone in bones:  # type: bpy.types.EditBone, mdl_data.SourceMdlBone
             if se_bone.parentBoneIndex != -1:
                 bl_parent, parent = bones[se_bone.parentBoneIndex]
                 bl_bone.parent = bl_parent
@@ -132,7 +117,7 @@ class IOMdl:
             bl_bone.tail = Vector([0, 0, 1]) + bl_bone.head
 
         bpy.ops.object.mode_set(mode='POSE')
-        for se_bone in self.MDL.file_data.bones:  # type: MDL_DATA.SourceMdlBone
+        for se_bone in self.MDL.file_data.bones:  # type: mdl_data.SourceMdlBone
             bl_bone = self.armature_obj.pose.bones.get(se_bone.name)
             pos = Vector([se_bone.position.x, se_bone.position.y, se_bone.position.z])
             rot = Euler([se_bone.rotation.x, se_bone.rotation.y, se_bone.rotation.z])
@@ -207,13 +192,13 @@ class IOMdl:
 
         return mat_ind
 
-    def get_polygon(self, strip_group: VTX_DATA.SourceVtxStripGroup, vtx_index_index: int, lod_index,
+    def get_polygon(self, strip_group: vtx_data.SourceVtxStripGroup, vtx_index_index: int, lod_index,
                     mesh_vertex_offset):
         vertex_indices = []
         vn_s = []
         for i in [0, 2, 1]:
             vtx_vertex_index = strip_group.vtx_indexes[vtx_index_index + i]  # type: int
-            vtx_vertex = strip_group.vtx_vertexes[vtx_vertex_index]  # type: VTX_DATA.SourceVtxVertex
+            vtx_vertex = strip_group.vtx_vertexes[vtx_vertex_index]  # type: vtx_data.SourceVtxVertex
             vertex_index = vtx_vertex.original_mesh_vertex_index + self.vertex_offset + mesh_vertex_offset
             if vertex_index > self.VVD.file_data.lod_vertex_count[0]:
                 print('vertex index out of bounds, skipping this mesh_data')
@@ -226,9 +211,9 @@ class IOMdl:
             vn_s.append(vn)
         return vertex_indices, vn_s
 
-    def convert_mesh(self, vtx_model: VTX_DATA.SourceVtxModel, lod_index, model: MDL_DATA.SourceMdlModel,
+    def convert_mesh(self, vtx_model: vtx_data.SourceVtxModel, lod_index, model: mdl_data.SourceMdlModel,
                      material_indexes):
-        vtx_meshes = vtx_model.vtx_model_lods[lod_index].vtx_meshes  # type: List[VTX_DATA.SourceVtxMesh]
+        vtx_meshes = vtx_model.vtx_model_lods[lod_index].vtx_meshes  # type: List[vtx_data.SourceVtxMesh]
         indexes = []
         vertex_normals = []
         # small speedup
@@ -236,14 +221,14 @@ class IOMdl:
         m_ex = material_indexes.append
         vn_ex = vertex_normals.extend
 
-        for mesh_index, vtx_mesh in enumerate(vtx_meshes):  # type: int,VTX_DATA.SourceVtxMesh
+        for mesh_index, vtx_mesh in enumerate(vtx_meshes):  # type: int,vtx_data.SourceVtxMesh
             material_index = model.meshes[mesh_index].material_index
             mesh_vertex_start = model.meshes[mesh_index].vertex_index_start
             if vtx_mesh.vtx_strip_groups:
                 for group_index, strip_group in enumerate(
-                        vtx_mesh.vtx_strip_groups):  # type: VTX_DATA.SourceVtxStripGroup
+                        vtx_mesh.vtx_strip_groups):  # type: vtx_data.SourceVtxStripGroup
                     if strip_group.vtx_strips and strip_group.vtx_indexes and strip_group.vtx_vertexes:
-                        field = progressBar.Progress_bar('Converting mesh_data', len(strip_group.vtx_indexes), 20)
+                        field = progress_bar.ProgressBar('Converting mesh_data', len(strip_group.vtx_indexes), 20)
                         for vtx_index in range(0, len(strip_group.vtx_indexes), 3):
                             if not vtx_index % 3 * 10:
                                 field.increment(3)
@@ -263,15 +248,15 @@ class IOMdl:
         return indexes, material_indexes, vertex_normals
 
     @staticmethod
-    def convert_vertex(vertex: GLOBALS.SourceVertex):
+    def convert_vertex(vertex: valve_structs.SourceVertex):
         return vertex.position.as_list, (vertex.texCoordX, 1 - vertex.texCoordY)
 
     @staticmethod
-    def convert_vertex2(vertex: GLOBALS.SourceVertex):
+    def convert_vertex2(vertex: valve_structs.SourceVertex):
         return vertex.position.as_list, (
             vertex.texCoordX, 1 - vertex.texCoordY), vertex.normal.as_list, vertex.boneWeight
 
-    def create_model2(self, model: MDL_DATA.SourceMdlModel, vtx_model: VTX_DATA.SourceVtxModel):
+    def create_model2(self, model: mdl_data.SourceMdlModel, vtx_model: vtx_data.SourceVtxModel):
         name = model.name.replace('.smd', '').replace('.dmx', '')
         if '/' in name or '\\' in name:
             name = os.path.basename(name)
@@ -296,7 +281,7 @@ class IOMdl:
         vtx_vertexes = []
         vertexes = []
         normals = []
-        weights = []  # type: List[GLOBALS.SourceBoneWeight]
+        weights = []  # type: List[valve_structs.SourceBoneWeight]
         uvs = []
         for vtx_mesh, mdl_mesh in zip(vtx_model_lod.vtx_meshes, model.meshes):
             # mdl_mesh.vertex_index_start
@@ -318,7 +303,7 @@ class IOMdl:
                 # self.index_offset+=strip_group.index_count
 
         self.vertex_offset += model.vertex_count
-        field = progressBar.Progress_bar('Converting mesh_data', len(vertex_global_ids), 20)
+        field = progress_bar.ProgressBar('Converting mesh_data', len(vertex_global_ids), 20)
         for i, vertex_id in enumerate(set(vertex_global_ids)):
             v, uv, n, w = self.convert_vertex2(
                 vvd_verts[vertex_id])
@@ -353,7 +338,7 @@ class IOMdl:
 
         return remap
 
-    def create_model(self, model: MDL_DATA.SourceMdlModel, vtx_model: VTX_DATA.SourceVtxModel):
+    def create_model(self, model: mdl_data.SourceMdlModel, vtx_model: vtx_data.SourceVtxModel):
         name = model.name.replace('.smd', '').replace('.dmx', '')
         if '/' in name or '\\' in name:
             name = os.path.basename(name)
@@ -377,7 +362,7 @@ class IOMdl:
         material_indexes = []
         weight_groups = {bone.name: self.mesh_obj.vertex_groups.new(name = bone.name) for bone in
                          self.MDL.file_data.bones}
-        vtx_model_lod = vtx_model.vtx_model_lods[0]  # type: VTX_DATA.SourceVtxModelLod
+        vtx_model_lod = vtx_model.vtx_model_lods[0]  # type: vtx_data.SourceVtxModelLod
         print('Converting {} mesh_data'.format(name))
         if vtx_model_lod.meshCount > 0:
             t = time.time()
@@ -449,7 +434,7 @@ class IOMdl:
     def create_models(self):
         self.collection = bpy.data.collections.new(self.MDL.file_data.name)
         bpy.context.scene.collection.children.link(self.collection)
-        self.MDL.file_data = self.MDL.file_data  # type: MDL_DATA.SourceMdlFileData
+        self.MDL.file_data = self.MDL.file_data  # type: mdl_data.SourceMdlFileData
         for bodyparts in self.MDL.file_data.bodypart_frames:
             to_join = []
             for bodypart_index, bodypart in bodyparts:
@@ -477,7 +462,7 @@ class IOMdl:
                     bpy.ops.mesh.remove_doubles(threshold=0.00001)
                     bpy.ops.object.mode_set(mode='OBJECT')
 
-    def add_flexes(self, mdlmodel: MDL_DATA.SourceMdlModel):
+    def add_flexes(self, mdlmodel: mdl_data.SourceMdlModel):
         # Creating base shape key
         self.mesh_obj.shape_key_add(name='base')
 
@@ -495,7 +480,7 @@ class IOMdl:
                     self.mesh_obj.shape_key_add(name=flex_name)
 
                 # iterating over all VertAnims
-                for flex_vert in flex.the_vert_anims:  # type: MDL_DATA.SourceMdlVertAnim
+                for flex_vert in flex.the_vert_anims:  # type: mdl_data.SourceMdlVertAnim
                     vertex_index = flex_vert.index + vertex_offset  # <- bodyAndMeshVertexIndexStarts
                     vx = self.mesh_obj.data.vertices[vertex_index].co.x
                     vy = self.mesh_obj.data.vertices[vertex_index].co.y
@@ -537,7 +522,7 @@ class IOMdl:
     def import_materials(self, path):
         materials = []
         path = Path(path)
-        mod_path = ValveUtils.get_mod_path(path)
+        mod_path = blender.get_mod_path(path)
         game_info_path = mod_path / 'gameinfo.txt'
         if game_info_path.exists():
             gi = ValveUtilsVTF.GameInfoFile(game_info_path)
@@ -552,15 +537,3 @@ class IOMdl:
                 mat = gi.find_material(tex_path + texture.path_file_name, use_recursive=True)
                 if mat:
                     materials.append((Path(mat), Path(mat).relative_to(game_info_path)))
-
-
-if __name__ == '__main__':
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\tf_movies\models\player\hwm\spy'
-    # model_path = r"G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\workshop\models\jawsfm\quake champions\characters\sorlag.mdl"
-    model_path = r"C:\Users\RED_EYE\Downloads\kateryne.mdl"
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\tyranno\raptor.mdl'
-    # model_path = r'./test_data/hl/box01a.mdl'
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\rick-and-morty\pink_raptor.mdl'
-    a = IOMdl(model_path, join_bones=False, join_clamped=True)
-    # a = IOMdl(r'test_data\titan_buddy.mdl', normal_bones=False)
-    # a = IO_MDL(r'E:\PYTHON\MDL_reader\test_data\nick_hwm.mdl', normal_bones=True)

@@ -1,8 +1,8 @@
 from enum import IntEnum
 
-from ByteIO import ByteIO
-from Source2.Blocks.Dummy import Dummy
-from Source2.Blocks.Header import InfoBlock
+from byte_io import ByteIO
+from .dummy import Dummy
+from .header import InfoBlock
 
 
 class KVFlag(IntEnum):

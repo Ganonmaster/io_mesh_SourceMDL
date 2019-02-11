@@ -2,7 +2,7 @@
 #
 # from ByteIO import ByteIO
 # from GLOBALS import SourceVector
-# from Source2.Blocks.Dummy import Dummy
+# from source2.blocks.Dummy import Dummy
 #
 #
 # class VmdlcDATABlock(Dummy):

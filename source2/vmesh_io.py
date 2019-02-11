@@ -1,10 +1,10 @@
 import sys
 
 sys.path.append(r'E:\PYTHON\io_mesh_SourceMDL')
-from Source2.ValveFile import ValveFile
-from Source2.Blocks.VBIB import *
+from .valve_file import ValveFile
+from .blocks.vbib import *
 import os.path
-import bpy, mathutils
+import bpy
 
 # model_path = r'E:\PYTHON\io_mesh_SourceMDL/test_data/source2/bad_ancient_destruction_pitrim_model.vmesh_c'
 

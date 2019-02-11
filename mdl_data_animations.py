@@ -6,15 +6,9 @@ import struct
 
 import math
 
-try:
-    from .ByteIO import ByteIO
-    from .GLOBALS import SourceFloat16bits, SourceVector
-    from .MDL_DATA import *
-except:
-    from ByteIO import ByteIO
-    from GLOBALS import SourceFloat16bits, SourceVector
-    from MDL_DATA import *
-
+from .byte_io import ByteIO
+from .valve_structs import SourceFloat16bits, SourceVector
+from .mdl_data import *
 
 class SourceMdlAnimationValuePointer:
     """"FROM: SourceEngine2006_source\public\studio.h

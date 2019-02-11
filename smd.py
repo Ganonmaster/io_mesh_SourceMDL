@@ -1,24 +1,11 @@
-import time
-try:
-    import MDL_DATA
-    import VTX_DATA
-    import progressBar
-    from MDL import *
-    from VTX import *
-    from VVD import *
-    from VTX_DATA import *
-    from MDL_DATA import *
-    from VVD_DATA import *
-except:
-    from . import MDL_DATA
-    from . import VTX_DATA
-    from . import progressBar
-    from .MDL import *
-    from .VTX import *
-    from .VVD import *
-    from .VTX_DATA import *
-    from .MDL_DATA import *
-    from .VVD_DATA import *
+from . import vtx_data
+from . import progress_bar
+from .mdl import *
+from .vtx import *
+from .vvd import *
+from .vtx_data import *
+from .mdl_data import *
+from .vvd_data import *
 import os.path
 
 
@@ -30,12 +17,12 @@ class SMD:
         self.filemap = {}
         self.vertex_offset = 0
 
-    def get_polygon(self, strip_group: VTX_DATA.SourceVtxStripGroup, vtx_index_index: int, _, mesh_vertex_offset):
+    def get_polygon(self, strip_group: vtx_data.SourceVtxStripGroup, vtx_index_index: int, _, mesh_vertex_offset):
         vertex_indices = []
         vn_s = []
         for i in [0, 2, 1]:
             vtx_vertex_index = strip_group.vtx_indexes[vtx_index_index + i]  # type: int
-            vtx_vertex = strip_group.vtx_vertexes[vtx_vertex_index]  # type: VTX_DATA.SourceVtxVertex
+            vtx_vertex = strip_group.vtx_vertexes[vtx_vertex_index]  # type: vtx_data.SourceVtxVertex
             vertex_index = vtx_vertex.original_mesh_vertex_index + self.vertex_offset + mesh_vertex_offset
             if vertex_index > self.vvd.file_data.lod_vertex_count[0]:
                 print('vertex index out of bounds, skipping this mesh_data')
@@ -49,9 +36,9 @@ class SMD:
 
         return vertex_indices, vn_s
 
-    def convert_mesh(self, vtx_model: VTX_DATA.SourceVtxModel, lod_index, model: MDL_DATA.SourceMdlModel,
+    def convert_mesh(self, vtx_model: vtx_data.SourceVtxModel, lod_index, model: MDL_DATA.SourceMdlModel,
                      material_indexes):
-        vtx_meshes = vtx_model.vtx_model_lods[lod_index].vtx_meshes  # type: List[VTX_DATA.SourceVtxMesh]
+        vtx_meshes = vtx_model.vtx_model_lods[lod_index].vtx_meshes  # type: List[vtx_data.SourceVtxMesh]
         indexes = []
         vertex_normals = []
         # small speedup
@@ -59,12 +46,12 @@ class SMD:
         m_ex = material_indexes.extend
         vn_ex = vertex_normals.extend
 
-        for mesh_index, vtx_mesh in enumerate(vtx_meshes):  # type: int,VTX_DATA.SourceVtxMesh
+        for mesh_index, vtx_mesh in enumerate(vtx_meshes):  # type: int,vtx_data.SourceVtxMesh
             material_index = model.meshes[mesh_index].material_index
             mesh_vertex_start = model.meshes[mesh_index].vertex_index_start
             if vtx_mesh.vtx_strip_groups:
                 for group_index, strip_group in enumerate(
-                        vtx_mesh.vtx_strip_groups):  # type: VTX_DATA.SourceVtxStripGroup
+                        vtx_mesh.vtx_strip_groups):  # type: vtx_data.SourceVtxStripGroup
                     strip_indexes = []
                     strip_material = []
                     strip_vertex_normals = []
@@ -73,7 +60,7 @@ class SMD:
                     si_app = strip_indexes.append
                     svn_app = strip_vertex_normals.extend
                     if strip_group.vtx_strips and strip_group.vtx_indexes and strip_group.vtx_vertexes:
-                        field = progressBar.Progress_bar('Converting mesh_data', len(strip_group.vtx_indexes), 20)
+                        field = progress_bar.ProgressBar('Converting mesh_data', len(strip_group.vtx_indexes), 20)
                         for vtx_index in range(0, len(strip_group.vtx_indexes), 3):
                             if not vtx_index % 3 * 10:
                                 field.increment(3)
@@ -164,11 +151,3 @@ class SMD:
 
     def write_end(self, fileh):
         fileh.close()
-
-
-if __name__ == '__main__':
-    mdl = SourceMdlFile49(r'.\test_data\nick_hwm')
-    vvd = SourceVvdFile49(r'.\test_data\nick_hwm')
-    vtx = SourceVtxFile49(r'.\test_data\nick_hwm')
-    A = SMD(mdl, vvd, vtx)
-    A.write_meshes()

@@ -1,4 +1,4 @@
-from ByteIO import ByteIO
+from byte_io import ByteIO
 
 
 class Dummy:

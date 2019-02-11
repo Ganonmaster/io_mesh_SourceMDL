@@ -1,14 +1,8 @@
 import sys
 import os
-
-try:
-    from .ByteIO import ByteIO
-    from .VVD_DATA import SourceVvdFileData
-    from .Utils import case_insensitive_file_resolution
-except Exception:
-    from ByteIO import ByteIO
-    from VVD_DATA import SourceVvdFileData
-    from Utils import case_insensitive_file_resolution
+from .byte_io import ByteIO
+from .vvd_data import SourceVvdFileData
+from .utils import case_insensitive_file_resolution
 
 
 class SourceVvdFile49:
@@ -41,14 +35,3 @@ class SourceVvdFile49:
     def test(self):
         for v in self.file_data.vertexes:
             print(v)
-
-
-if __name__ == '__main__':
-    with open('log.log', "w") as f:  # replace filepath & filename
-        with f as sys.stdout:
-            # model_path = r'.\test_data\xenomorph'
-            # model_path = r'.\test_data\hard_suit'
-            # model_path = r'.\test_data\l_pistol_noenv'
-            model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\usermod\models\red_eye\tyranno\raptor'
-            # MDL_edit('E:\\MDL_reader\\sexy_bonniev2')
-            SourceVvdFile49(model_path).test()

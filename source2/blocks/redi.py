@@ -1,9 +1,9 @@
 from typing import List
 
-from Source2.Blocks.Dummy import Dummy
-from Source2.Blocks.Header import InfoBlock
-from Source2.Blocks.REDI_DATA import *
-from Source2.ValveFile import ValveFile
+from .dummy import Dummy
+from .header import InfoBlock
+from .redi_data import *
+from ..valve_file import ValveFile
 
 redi_blocks = [InputDependencies,
                AdditionalInputDependencies,

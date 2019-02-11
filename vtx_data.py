@@ -1,12 +1,7 @@
 import struct
 from typing import List
-
-try:
-    from .flags import Flags
-    from .ByteIO import ByteIO
-except Exception:
-    from ByteIO import ByteIO
-    from flags import Flags
+from .flags import Flags
+from .byte_io import ByteIO
 
 max_bones_per_vertex = 3
 extra_8 = True

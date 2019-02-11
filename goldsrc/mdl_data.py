@@ -1,15 +1,10 @@
 from __future__ import absolute_import
 from pprint import pformat
-try:
-    from .ByteIO import ByteIO
-    from .GLOBALS import SourceVector
-    # from MDL_DATA import StudioHDRFlags
-    from .Utils import get_class_var_name
-except:
-    from ByteIO import ByteIO
-    from GLOBALS import SourceVector
-    # from MDL_DATA import StudioHDRFlags
-    from Utils import get_class_var_name
+
+from ..byte_io import ByteIO
+from ..valve_structs import SourceVector
+# from .mdl_data import StudioHDRFlags
+from ..utils import get_class_var_name
 
 
 class SourceMdlFileDataV10:
@@ -250,11 +245,3 @@ class SourceMdlBoneController:
 
     def __repr__(self):
         return '<BoneController bone index:{}>'.format(self.boneIndex)
-
-
-if __name__ == '__main__':
-    model = r"E:\PYTHON\io_mesh_SourceMDL\test_data\goldSrc\leet.mdl"
-    reader = ByteIO(path=model)
-    mdl = SourceMdlFileDataV10()
-    mdl.read(reader)
-    mdl.print_info()

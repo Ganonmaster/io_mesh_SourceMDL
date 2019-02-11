@@ -1,11 +1,7 @@
 import math
 import random
 import struct
-
-try:
-    from .ByteIO import ByteIO
-except Exception:
-    from ByteIO import ByteIO
+from .byte_io import ByteIO
 
 
 class SourceVector:

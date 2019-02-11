@@ -5,22 +5,12 @@ from pprint import pformat
 
 from typing import List, Tuple
 
-try:
-    from .ByteIO import ByteIO, OffsetOutOfBounds
-    from .GLOBALS import SourceVector, SourceQuaternion, SourceFloat16bits
-    from . import VTX, VVD
-    from . import math_utilities
-    from .flags import Flags
-    from .Utils import get_class_var_name
-
-except Exception:
-    from ByteIO import ByteIO, OffsetOutOfBounds
-    from GLOBALS import SourceVector, SourceQuaternion, SourceFloat16bits
-    import VTX
-    import VVD
-    import math_utilities
-    from flags import Flags
-    from Utils import get_class_var_name
+from .byte_io import ByteIO, OffsetOutOfBounds
+from .valve_structs import SourceVector, SourceQuaternion, SourceFloat16bits
+from . import vtx, vvd
+from . import math_utilities
+from .flags import Flags
+from .utils import get_class_var_name
 
 
 class SourceBase:
@@ -618,9 +608,9 @@ class SourceMdlFileDataV53(SourceMdlFileData):
         if self.vvd_offset != 0 and self.vtx_offset != 0:
             with reader.save_current_pos():
                 reader.seek(self.vtx_offset)
-                self.vtx = VTX.SourceVtxFile49(file=ByteIO(byte_object=reader.read_bytes(-1)))
+                self.vtx = vtx.SourceVtxFile49(file=ByteIO(byte_object=reader.read_bytes(-1)))
                 reader.seek(self.vvd_offset)
-                self.vvd = VVD.SourceVvdFile49(file=ByteIO(byte_object=reader.read_bytes(-1)))
+                self.vvd = vvd.SourceVvdFile49(file=ByteIO(byte_object=reader.read_bytes(-1)))
 
         if self.body_part_count == 0 and self.local_sequence_count > 0:
             self.mdl_file_only_has_animations = True

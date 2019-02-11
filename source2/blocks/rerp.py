@@ -1,9 +1,9 @@
 from typing import List
 
-from ByteIO import ByteIO
-from Source2.Blocks.Dummy import Dummy
-from Source2.Blocks.Header import InfoBlock
-from Source2.ValveFile import ValveFile
+from byte_io import ByteIO
+from .dummy import Dummy
+from .header import InfoBlock
+from ..valve_file import ValveFile
 
 
 class RERL(Dummy):

@@ -1,12 +1,12 @@
 from typing import List
 
-from ByteIO import ByteIO
-from Source2.Blocks.Common import KeyValueDataType, kv_type_to_c_type, SourceVector2D, SourceVector, SourceVector4D, \
+from byte_io import ByteIO
+from .common import KeyValueDataType, kv_type_to_c_type, SourceVector2D, SourceVector, SourceVector4D, \
     Matrix, CTransform
 
-from Source2.Blocks.Dummy import Dummy
-from Source2.Blocks.Header import InfoBlock
-from Source2.ValveFile import ValveFile
+from .dummy import Dummy
+from .header import InfoBlock
+from ..valve_file import ValveFile
 
 
 class NTRO(Dummy):

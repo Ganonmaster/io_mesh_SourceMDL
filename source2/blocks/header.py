@@ -1,5 +1,5 @@
-from ByteIO import ByteIO
-from Source2.Blocks.Dummy import Dummy
+from byte_io import ByteIO
+from .dummy import Dummy
 
 
 class CompiledHeader(Dummy):

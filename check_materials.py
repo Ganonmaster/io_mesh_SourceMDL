@@ -7,9 +7,9 @@ k32 = windll.LoadLibrary('kernel32.dll')
 setConsoleModeProc = k32.SetConsoleMode
 setConsoleModeProc(k32.GetStdHandle(-11), 0x0001 | 0x0002 | 0x0004)
 
-import MDL
-import ValveUtils
-from ValveUtils import GameInfoFile, KeyValueFile
+from . import mdl
+from .ValveFileSystem import blender
+from .ValveFileSystem.valve import GameInfoFile, KeyValueFile
 
 if __name__ == '__main__':
     # model = Path(
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         print('\033[91mMODEL NOT FOUND\033[0m')
         exit()
     print('\033[94mReading \033[95m{}\033[0m'.format(model))
-    mod_path = ValveUtils.get_mod_path(model)
+    mod_path = blender.get_mod_path(model)
     game_info_path = mod_path / 'gameinfo.txt'
     if not game_info_path.exists():
         raise FileNotFoundError("Failed to find gameinfo file")
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     textures = []
     used_textures = []
     materials = []
-    temp = ValveUtils.get_mod_path(model)
+    temp = blender.get_mod_path(model)
     other_files = [
         (model, Path(model).relative_to(temp)),
         (model.with_suffix('.vvd'), Path(model.with_suffix('.vvd')).relative_to(temp))]
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         print('\t\x1b[95m{}\x1b[0m'.format(path))
     if model.exists():
         # other_files.append(model)
-        mdl = MDL.SourceMdlFile49(filepath=str(model.with_name(model.stem)), read=False)
+        mdl = mdl.SourceMdlFile49(filepath=str(model.with_name(model.stem)), read=False)
         mdl.read_skin_families()
         mdl.read_texture_paths()
         mdl.read_textures()
@@ -61,7 +61,7 @@ if __name__ == '__main__':
                     tex_path = tex_path[1:]
                 mat = gi.find_material(Path(tex_path) / texture.path_file_name, use_recursive=True)
                 if mat:
-                    temp = ValveUtils.get_mod_path(mat)
+                    temp = blender.get_mod_path(mat)
                     materials.append((Path(mat), Path(mat).relative_to(temp)))
             ...
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                     used_textures.append(Path(v))
                     tex = gi.find_texture(v, True)
                     if tex:
-                        temp = ValveUtils.get_mod_path(tex)
+                        temp = blender.get_mod_path(tex)
                         textures.append((Path(tex), Path(tex).relative_to(temp)))
             # print(kv.as_dict)
         print('\033[94m', '*' * 10, 'MATERIALS', '*' * 10, '\033[0m')

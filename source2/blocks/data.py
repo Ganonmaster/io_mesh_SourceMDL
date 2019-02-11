@@ -1,10 +1,11 @@
-from ByteIO import ByteIO
-from Source2.Blocks.Dummy import Dummy
-from Source2.Blocks.Header import InfoBlock
-from Source2.ValveFile import ValveFile
-from Source2.Blocks.BinaryKeyValue import BinaryKeyValue
+from byte_io import ByteIO
+from .dummy import Dummy
+from .header import InfoBlock
+from .binary_keyvalue import BinaryKeyValue
+from ..valve_file import ValveFile
 
-class DATA(Dummy):
+
+class Data(Dummy):
     def __init__(self, valve_file:ValveFile):
         self.valve_file = valve_file
         self.data = {}

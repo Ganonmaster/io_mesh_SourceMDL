@@ -1,8 +1,8 @@
 import os
 
-from ByteIO import ByteIO
-from goldsrc.MDL_DATA import SourceMdlFileDataV10, SourceMdlBone, SourceMdlBoneController
-from progressBar import Progress_bar
+from ..byte_io import ByteIO
+from ..progress_bar import ProgressBar
+from .mdl_data import SourceMdlFileDataV10, SourceMdlBone, SourceMdlBoneController
 
 
 class SourceMdlFile10:
@@ -30,7 +30,7 @@ class SourceMdlFile10:
 
     def read_bones(self):
         if self.file_data.bone_count > 0:
-            pb = Progress_bar(desc='Reading bones', max_=self.file_data.bone_count, len_=20)
+            pb = ProgressBar(desc='Reading bones', max_=self.file_data.bone_count, len_=20)
             self.reader.seek(self.file_data.bone_offset, 0)
             for i in range(self.file_data.bone_count):
                 pb.draw()
@@ -40,7 +40,7 @@ class SourceMdlFile10:
 
     def read_bone_controllers(self):
         if self.file_data.bone_controller_count > 0:
-            pb = Progress_bar(desc='Reading Bone Controllers', max_=self.file_data.bone_controller_count, len_=20)
+            pb = ProgressBar(desc='Reading Bone Controllers', max_=self.file_data.bone_controller_count, len_=20)
             for _ in range(self.file_data.bone_controller_count):
                 pb.draw()
                 SourceMdlBoneController().read(self.reader, self.file_data)
@@ -58,9 +58,3 @@ class SourceMdlFile10:
     def test(self):
         for bone in self.file_data.bones:
             print(bone)
-
-if __name__ == '__main__':
-    model_path = r"E:\PYTHON\io_mesh_SourceMDL\test_data\goldSrc\leet"
-    a = SourceMdlFile10(model_path)
-    a.test()
-    a.file_data.print_info()

@@ -1,11 +1,6 @@
 from typing import List
-
-try:
-    from .ByteIO import ByteIO
-    from .GLOBALS import SourceVertex
-except Exception:
-    from ByteIO import ByteIO
-    from GLOBALS import SourceVertex
+from .byte_io import ByteIO
+from .valve_structs import SourceVertex
 
 
 class SourceVvdFileData:

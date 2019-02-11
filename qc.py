@@ -1,26 +1,15 @@
 import math
 import os.path
 from pathlib import Path
-try:
-    from GLOBALS import SourceVector
-    from MDL import SourceMdlFile49, SourceMdlModel
-    from MDL_DATA import SourceMdlBodyPart, SourceMdlAttachment
-    from MDL_DATA_ANIMATIONS import SourceMdlSequenceDesc
-    from SMD import SMD
-    from VTA import VTA
-    from VTX import SourceVtxFile49
-    from VVD import SourceVvdFile49
-    from math_utilities import convert_rotation_matrix_to_degrees
-except:
-    from .GLOBALS import SourceVector
-    from .MDL import SourceMdlFile49, SourceMdlModel
-    from .MDL_DATA import SourceMdlBodyPart, SourceMdlAttachment
-    from .MDL_DATA_ANIMATIONS import SourceMdlSequenceDesc
-    from .SMD import SMD
-    from .VTA import VTA
-    from .VTX import SourceVtxFile49
-    from .VVD import SourceVvdFile49
-    from .math_utilities import convert_rotation_matrix_to_degrees
+from .valve_structs import SourceVector
+from .mdl import SourceMdlFile49, SourceMdlModel
+from .mdl_data import SourceMdlBodyPart, SourceMdlAttachment
+from .mdl_data_animations import SourceMdlSequenceDesc
+from .smd import SMD
+from .vta import VTA
+from .vtx import SourceVtxFile49
+from .vvd import SourceVvdFile49
+from .math_utilities import convert_rotation_matrix_to_degrees
 
 
 class QC:
@@ -160,23 +149,3 @@ class QC:
             fileh.write('\tfadeout {:.2f}\n'.format(sequence.fadeOutTime))
             fileh.write('\tfps {}\n'.format(30))
             fileh.write('}')
-
-
-if __name__ == '__main__':
-    # model_path = r'.\test_data\test_case-2models-with-flexes'
-    model_path = r"G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\Furry\models\Dragon-V0942\Mathew_Kelly\mathew_kelly"
-    # model_path = r'G:\SteamLibrary\SteamApps\common\SourceFilmmaker\game\tf_movies\models\player\hwm\spy'
-    # model = r'H:\games\Titanfall 2\extr\models\weapons\titan_sniper_rifle\w_titan_sniper_rifle'
-    # mdl = SourceMdlFile49(r'.\test_data\pink_raptor')
-    mdl = SourceMdlFile49(model_path)
-    file_data = SourceVvdFile49(model_path)
-    vtx = SourceVtxFile49(model_path)
-    # mdl2 = SourceMdlFile53(model)
-
-    # A = QC(mdl)
-    # B = QC(mdl1)
-    # C = QC(mdl2,mdl2.VVD,mdl2.VTX)
-    # C.write_qc()
-    A = QC(mdl, file_data, vtx)
-    A.write_qc()
-    # B.write_qc()
